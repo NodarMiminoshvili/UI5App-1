@@ -1,0 +1,13 @@
+{
+  "name": "nodar.miminoshvili",
+  "version": "1.0.0",
+  "private": true,
+  "author": "SAP SE",
+  "description": "Simple App",
+  "scripts": {
+    "start": "ui5 serve -o index.html"
+  },
+  "devDependencies": {
+    "@ui5/cli": "^4.0.16"
+  }
+}

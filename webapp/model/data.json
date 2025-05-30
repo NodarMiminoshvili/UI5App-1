@@ -1,0 +1,243 @@
+{
+  "Cars":[
+  {
+    "ID": "C001",
+    "Name": "Toyota Camry",
+    "Supplier": "Toyota Motors",
+    "Category": "Sedan",
+    "Status": "In Stock",
+    "PriceAmount": "25000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2022",
+    "Photo": "/images/car.svg"
+  },
+  {
+    "ID": "C002",
+    "Name": "Honda Accord",
+    "Supplier": "Honda Motors",
+    "Category": "Sedan",
+    "Status": "Out of Stock",
+    "PriceAmount": "26500",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2021",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C003",
+    "Name": "Ford Mustang",
+    "Supplier": "Ford Motor Co.",
+    "Category": "Coupe",
+    "Status": "In Stock",
+    "PriceAmount": "45000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2023",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C004",
+    "Name": "BMW 3 Series",
+    "Supplier": "BMW AG",
+    "Category": "Sedan",
+    "Status": "In Stock",
+    "PriceAmount": "42000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2019",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C005",
+    "Name": "Tesla Model 3",
+    "Supplier": "Tesla Inc.",
+    "Category": "Electric Sedan",
+    "Status": "In Stock",
+    "PriceAmount": "38000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2022",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C006",
+    "Name": "Chevrolet Silverado 1500",
+    "Supplier": "Chevrolet",
+    "Category": "Pickup Truck",
+    "Status": "Out of Stock",
+    "PriceAmount": "35500",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2022",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C007",
+    "Name": "Nissan Altima",
+    "Supplier": "Nissan Motors",
+    "Category": "Sedan",
+    "Status": "In Stock",
+    "PriceAmount": "24000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2024",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C008",
+    "Name": "Audi A4",
+    "Supplier": "Audi AG",
+    "Category": "Sedan",
+    "Status": "In Stock",
+    "PriceAmount": "41000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2023",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C009",
+    "Name": "Mercedes-Benz C-Class",
+    "Supplier": "Mercedes-Benz",
+    "Category": "Sedan",
+    "Status": "In Stock",
+    "PriceAmount": "43500",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2024",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C010",
+    "Name": "Subaru Outback",
+    "Supplier": "Subaru",
+    "Category": "SUV",
+    "Status": "In Stock",
+    "PriceAmount": "32000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2018",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C011",
+    "Name": "Jeep Wrangler",
+    "Supplier": "Jeep",
+    "Category": "SUV",
+    "Status": "In Stock",
+    "PriceAmount": "36000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2020",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C012",
+    "Name": "Hyundai Elantra",
+    "Supplier": "Hyundai",
+    "Category": "Sedan",
+    "Status": "In Stock",
+    "PriceAmount": "22500",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2023",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C013",
+    "Name": "Lexus RX 350",
+    "Supplier": "Lexus",
+    "Category": "SUV",
+    "Status": "In Stock",
+    "PriceAmount": "47000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2023",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C014",
+    "Name": "Volkswagen Golf GTI",
+    "Supplier": "Volkswagen",
+    "Category": "Hatchback",
+    "Status": "In Stock",
+    "PriceAmount": "28000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2023",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C015",
+    "Name": "Kia Sorento",
+    "Supplier": "Kia Motors",
+    "Category": "SUV",
+    "Status": "Out of Stock",
+    "PriceAmount": "34500",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2023",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C016",
+    "Name": "Audi Q5",
+    "Supplier": "Audi AG",
+    "Category": "SUV",
+    "Status": "In Stock",
+    "PriceAmount": "50000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2023",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C017",
+    "Name": "Porsche 911",
+    "Supplier": "Porsche",
+    "Category": "Coupe",
+    "Status": "In Stock",
+    "PriceAmount": "95000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2023",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C018",
+    "Name": "Ram 1500",
+    "Supplier": "Ram Trucks",
+    "Category": "Pickup Truck",
+    "Status": "In Stock",
+    "PriceAmount": "40000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2023",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C019",
+    "Name": "Volvo XC90",
+    "Supplier": "Volvo",
+    "Category": "SUV",
+    "Status": "Out of Stock",
+    "PriceAmount": "55000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2023",
+    "Photo": "/images/car.svg"
+
+  },
+  {
+    "ID": "C020",
+    "Name": "Mini Cooper",
+    "Supplier": "Mini",
+    "Category": "Hatchback",
+    "Status": "In Stock",
+    "PriceAmount": "26000",
+    "PriceCurrency":"USD",
+    "ReleaseYear": "2023",
+    "Photo": "/images/car.svg"
+
+  }
+]
+}

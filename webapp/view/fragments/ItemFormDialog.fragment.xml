@@ -1,0 +1,141 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:layout="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+>
+    <Dialog
+        id="itemFormDialog"
+        title="{i18n>itemFormDialogTitle}"
+        draggable="true"
+        resizable="true"
+        contentWidth="32rem"
+        class="sapUiResponsivePadding"
+    >
+        <form:SimpleForm
+            id="productForm"
+            layout="ResponsiveGridLayout"
+            editable="true"
+            labelSpanXL="4"
+            labelSpanL="4"
+            labelSpanM="12"
+            labelSpanS="12"
+            adjustLabelSpan="false"
+            emptySpanXL="0"
+            emptySpanL="0"
+            emptySpanM="0"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="1"
+        >
+            <form:content>
+                <Label text="{i18n>name}" />
+                <Input
+                    placeholder="{i18n>itemFormInputPlaceholderForName}"
+                    value="{
+					path: 'newItemModel>/Name',
+					type: 'sap.ui.model.type.String',
+					constraints: {
+						minLength: 3,
+						maxLength: 25
+					}
+                    }"
+                    required="true"
+                    valueLiveUpdate="true"
+                />
+
+                <Label text="{i18n>supplier}" />
+                <Input
+                    placeholder="{i18n>itemFormInputPlaceholderForSupplier}"
+                    value="{
+					path: 'newItemModel>/Supplier',
+					type: 'sap.ui.model.type.String',
+					constraints: {
+						minLength: 3,
+						maxLength: 25
+					}
+                    }"
+                    required="true"
+                    valueLiveUpdate="true"
+                />
+
+                <Label text="{i18n>price}" />
+                <HBox>
+                    <Input
+                        placeholder="{i18n>itemFormInputPlaceholderForPrice}"
+                        value="{
+					path: 'newItemModel>/PriceAmount',
+					type: 'sap.ui.model.type.Integer',
+					constraints: {
+						minimum: 1
+					}
+                    }"
+                        required="true"
+                        valueLiveUpdate="true"
+                    />
+
+                    <Select selectedKey="{newItemModel>/PriceCurrency}">
+                        <core:Item
+                            key="USD"
+                            text="USD"
+                        />
+                        <core:Item
+                            key="EUR"
+                            text="EUR"
+                        />
+                    </Select>
+                </HBox>
+
+                <Label text="Category" />
+                <Select
+                    selectedKey="{newItemModel>/Category}"
+                    items="{/CarCategories}"
+                >
+                    <core:Item
+                        key="{Category}"
+                        text="{Category}"
+                    />
+                </Select>
+
+                <Label text="{i18n>releaseYear}" />
+                <DatePicker
+                    id="itemFormDatePicker"
+                    value="{
+                        'path': 'newItemModel>/ReleaseYear',
+                        'type': 'sap.ui.model.type.Date',
+                        'formatOptions': {
+                            'pattern': 'yyyy'
+                            }
+                    }"
+                    required="true"
+                />
+                <Label text="{i18n>status}" />
+                <Select selectedKey="{newItemModel>/Status}">
+                    <core:Item
+                        key="In Stock"
+                        text="{i18n>inStock}"
+                    />
+
+                    <core:Item
+                        key="Out of Stock"
+                        text="{i18n>outOfStock}"
+                    />
+                </Select>
+            </form:content>
+        </form:SimpleForm>
+
+        <beginButton>
+            <Button
+                text="{i18n>saveButton}"
+                type="Emphasized"
+                press=".onSaveItem"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                text="{i18n>cancelButton}"
+                press=".onCancelItemCreation"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

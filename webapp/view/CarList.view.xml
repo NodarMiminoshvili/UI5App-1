@@ -1,0 +1,297 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    core:require="{formatter: 'nodar/miminoshvili/model/formatter',formatMessage: 'sap/base/strings/formatMessage'}"
+    controllerName="nodar.miminoshvili.controller.CarList"
+    height="100%"
+>
+    <f:DynamicPage
+        id="dynamicPageId"
+        showFooter="false"
+        class="sapUiNoContentPadding"
+    >
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <Title text="{i18n>carTableTitle}" />
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <f:header>
+            <f:DynamicPageHeader>
+                <f:content>
+                    <fb:FilterBar
+                        id="filterbar"
+                        useToolbar="false"
+                        showGoOnFB="false"
+                    >
+                        <fb:filterGroupItems>
+                            <fb:FilterGroupItem
+                                name="SearchField"
+                                groupName="Group1"
+                                visibleInFilterBar="true"
+                            >
+                                <fb:control>
+                                    <SearchField search=".onSearch" />
+                                </fb:control>
+                            </fb:FilterGroupItem>
+                            <fb:FilterGroupItem
+                                name="Supplier"
+                                label="{i18n>supplier}"
+                                groupName="Group1"
+                                visibleInFilterBar="true"
+                            >
+                                <fb:control>
+                                    <ComboBox
+                                        name="Supplier"
+                                        selectionChange=".onComboBoxChange"
+                                        showClearIcon="true"
+                                        items="{
+												path: '/Suppliers',
+												templateShareable: true
+											}"
+                                    >
+                                        <core:Item
+                                            key="{Supplier}"
+                                            text="{Supplier}"
+                                        />
+                                    </ComboBox>
+                                </fb:control>
+                            </fb:FilterGroupItem>
+                            <fb:FilterGroupItem
+                                name="Category"
+                                label="{i18n>category}"
+                                groupName="Group1"
+                                visibleInFilterBar="true"
+                            >
+                                <fb:control>
+                                    <MultiComboBox
+                                        name="Category"
+                                        selectionChange=".onMultiComboBoxChange"
+                                        items="{
+												path: '/CarCategories',
+												templateShareable: true
+											}"
+                                    >
+                                        <core:Item
+                                            key="{Category}"
+                                            text="{Category}"
+                                        />
+                                    </MultiComboBox>
+                                </fb:control>
+                            </fb:FilterGroupItem>
+                            <fb:FilterGroupItem
+                                name="ReleaseYear"
+                                label="Release Year"
+                                groupName="Group1"
+                                visibleInFilterBar="true"
+                            >
+                                <fb:control>
+                                    <DatePicker
+                                        value="{
+						                        'path': '/valueDP11',
+						                        'type': 'sap.ui.model.type.Date',
+						                        'formatOptions': {
+							                        'pattern': 'yyyy'
+						                                            }
+					                        }"
+                                        change="onDatePickerChange"
+                                    />
+                                </fb:control>
+                            </fb:FilterGroupItem>
+                        </fb:filterGroupItems>
+                    </fb:FilterBar>
+                </f:content>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <f:content>
+            <Table
+                id="table"
+                items="{/Cars}"
+                mode="MultiSelect"
+                inset="true"
+                selectionChange="onTableSelectionChange"
+            >
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title
+                            text="{
+                                parts: [
+							    'i18n>cars',
+							    '/Count'
+						        ],
+						formatter: 'formatMessage'
+                        }"
+                        />
+                        <ToolbarSpacer />
+                        <Button
+                            text="{i18n>add}"
+                            press=".onOpenProductForm"
+                        />
+                        <Button
+                            text="{i18n>delete}"
+                            enabled="{deleteButtonStateModel>/enabled}"
+                            press=".onOpenItemDeleteDialog"
+                        />
+                    </OverflowToolbar>
+                </headerToolbar>
+                <columns>
+                    <Column>
+                        <Text text="{i18n>photo}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Medium"
+                        demandPopin="true"
+                    >
+                        <HBox alignItems="Center">
+                            <Text
+                                text="{i18n>product}"
+                                class="sapUiSmallMarginEnd"
+                            />
+                            <Button
+                                press="onSort"
+                                app:field="ID"
+                                icon="{
+                                    parts: [
+                                    {value: 'ID'},
+                                    {path: 'sortModel>/sorter'}],
+                                    formatter: 'formatter.formatSortIcon'
+                                    }"
+                            />
+                        </HBox>
+                    </Column>
+                    <Column>
+                        <HBox alignItems="Center">
+                            <Text
+                                text="{i18n>name}"
+                                class="sapUiSmallMarginEnd"
+                            />
+                            <Button
+                                press="onSort"
+                                app:field="Name"
+                                icon="{
+                                    parts: [
+                                    {value: 'Name'},
+                                    {path: 'sortModel>/sorter'}],
+                                    formatter: 'formatter.formatSortIcon'
+                                    }"
+                            />
+                        </HBox>
+                    </Column>
+                    <Column
+                        minScreenWidth="Large"
+                        demandPopin="true"
+                    >
+                        <HBox alignItems="Center">
+                            <Text
+                                text="{i18n>supplier}"
+                                class="sapUiSmallMarginEnd"
+                            />
+                            <Button
+                                press="onSort"
+                                app:field="Supplier"
+                                icon="{
+                                    parts: [
+                                    {value: 'Supplier'},
+                                    {path: 'sortModel>/sorter'}],
+                                    formatter: 'formatter.formatSortIcon'
+                                    }"
+                            />
+                        </HBox>
+                    </Column>
+                    <Column
+                        minScreenWidth="XXLarge"
+                        demandPopin="true"
+                    >
+                        <Text text="{i18n>category}" />
+                    </Column>
+
+                    <Column
+                        minScreenWidth="1250px"
+                        demandPopin="true"
+                    >
+                        <Text text="{i18n>availability}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Desktop"
+                        demandPopin="true"
+                        vAlign="Middle"
+                    >
+                        <HBox alignItems="Center">
+                            <Text
+                                text="{i18n>releaseYear}"
+                                class="sapUiSmallMarginEnd"
+                            />
+                            <Button
+                                press="onSort"
+                                app:field="ReleaseYear"
+                                icon="{
+                                    parts: [
+                                    {value: 'ReleaseYear'},
+                                    {path: 'sortModel>/sorter'}],
+                                    formatter: 'formatter.formatSortIcon'
+                                    }"
+                            />
+                        </HBox>
+                    </Column>
+                    <Column
+                        minScreenWidth="Small"
+                        demandPopin="true"
+                    >
+                        <HBox alignItems="Center">
+                            <Text
+                                text="{i18n>price}"
+                                class="sapUiSmallMarginEnd"
+                            />
+                            <Button
+                                press="onSort"
+                                app:field="PriceAmount"
+                                icon="{
+                                    parts: [
+                                    {value: 'PriceAmount'},
+                                    {path: 'sortModel>/sorter'}],
+                                    formatter: 'formatter.formatSortIcon'
+                                    }"
+                            />
+                        </HBox>
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem vAlign="Middle">
+                        <cells>
+                            <Image
+                                src="{Photo}"
+                                width="48px"
+                                height="48px"
+                            />
+                            <ObjectIdentifier title="{ID}" />
+                            <Text text="{Name}" />
+                            <Text text="{Supplier}" />
+                            <Text text="{Category}" />
+                            <ObjectStatus
+                                text="{Status}"
+                                state="{path: 'Status', formatter: 'formatter.statusToState'}"
+                            />
+
+                            <ObjectAttribute text="{ReleaseYear}" />
+
+                            <ObjectNumber
+                                number="{
+								    parts:[{path:'PriceAmount'},{path:'PriceCurrency'}],
+								    type: 'sap.ui.model.type.Currency',
+                                    formatOptions: {showMeasure: true}
+									}"
+                            />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

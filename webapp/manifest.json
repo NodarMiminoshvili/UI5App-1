@@ -1,0 +1,90 @@
+{
+  "_version": "1.58.0",
+  "sap.app": {
+    "id": "nodar.miminoshvili",
+    "i18n": {
+      "bundleUrl": "i18n/i18n.properties"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "type": "application",
+    "applicationVersion": {
+      "version": "1.0.0"
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "handleValidation": true,
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.ui.comp": {}
+      }
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "nodar.miminoshvili.i18n.i18n",
+          "async": true,
+          "supportedLocales": ["en"],
+          "fallbackLocale": ""
+        }
+      },
+      "": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/data.json",
+        "settings": {
+          "defaultBindingMode": "TwoWay"
+        }
+      }
+    },
+
+    "rootView": {
+      "viewName": "nodar.miminoshvili.view.App",
+      "type": "XML",
+      "id": "app"
+    },
+
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "type": "View",
+        "viewType": "XML",
+        "path": "nodar.miminoshvili.view",
+        "controlId": "app",
+        "controlAggregation": "pages"
+      },
+     "routes": [
+			  {
+				"pattern": "",
+				"name": "CarList",
+				"target": "carList"
+			  },
+			  {
+				"pattern": "car/{carId}",
+				"name": "CarDetails",
+				"target": "car"
+			  }
+			  
+			],
+			"targets": {
+			  "carList": {
+				"name": "CarList"
+			  },
+			  "car": {
+				"name": "CarDetails"
+			  }
+			}
+		  }
+  }
+}
