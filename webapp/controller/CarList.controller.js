@@ -5,12 +5,13 @@ sap.ui.define(
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/Sorter",
+    "nodar/miminoshvili/utils/Constants",
   ],
 
-  (Controller, JSONModel, Filter, FilterOperator, Sorter) => {
+  (Controller, JSONModel, Filter, FilterOperator, Sorter, Constants) => {
     "use strict";
 
-    return Controller.extend("nodar.miminoshvili.controller.StoresOverview", {
+    return Controller.extend("nodar.miminoshvili.controller.CarList", {
       /**
        * @description Initializes the controller, setting up filters, sorting, and categories.
        */
@@ -458,6 +459,17 @@ sap.ui.define(
         const iCount = this.oBinding.getCount();
         const oModel = this.oBinding.getModel();
         oModel.setProperty("/Count", iCount);
+      },
+
+      onColPress(oEvent) {
+        const { ID: carId } = oEvent
+          .getSource()
+          .getBindingContext()
+          .getObject();
+
+        this.getOwnerComponent()
+          .getRouter()
+          .navTo(Constants.Routes.CAR_DETAILS, { carId });
       },
     });
   }

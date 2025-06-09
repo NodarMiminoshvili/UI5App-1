@@ -9,11 +9,7 @@
     controllerName="nodar.miminoshvili.controller.CarList"
     height="100%"
 >
-    <f:DynamicPage
-        id="dynamicPageId"
-        showFooter="false"
-        class="sapUiNoContentPadding"
-    >
+    <f:DynamicPage class="sapUiNoContentPadding">
         <f:title>
             <f:DynamicPageTitle>
                 <f:heading>
@@ -87,19 +83,13 @@
                             </fb:FilterGroupItem>
                             <fb:FilterGroupItem
                                 name="ReleaseYear"
-                                label="Release Year"
+                                label="{i18n>releaseYear}"
                                 groupName="Group1"
                                 visibleInFilterBar="true"
                             >
                                 <fb:control>
                                     <DatePicker
-                                        value="{
-						                        'path': '/valueDP11',
-						                        'type': 'sap.ui.model.type.Date',
-						                        'formatOptions': {
-							                        'pattern': 'yyyy'
-						                                            }
-					                        }"
+                                        displayFormat="yyyy"
                                         change="onDatePickerChange"
                                     />
                                 </fb:control>
@@ -126,8 +116,8 @@
 							    'i18n>cars',
 							    '/Count'
 						        ],
-						formatter: 'formatMessage'
-                        }"
+						        formatter: 'formatMessage'
+                            }"
                         />
                         <ToolbarSpacer />
                         <Button
@@ -158,9 +148,10 @@
                                 press="onSort"
                                 app:field="ID"
                                 icon="{
-                                    parts: [
-                                    {value: 'ID'},
-                                    {path: 'sortModel>/sorter'}],
+                                    parts:[
+                                        {value: 'ID'},
+                                        {path: 'sortModel>/sorter'}
+                                        ],
                                     formatter: 'formatter.formatSortIcon'
                                     }"
                             />
@@ -263,12 +254,15 @@
                     </Column>
                 </columns>
                 <items>
-                    <ColumnListItem vAlign="Middle">
+                    <ColumnListItem
+                        vAlign="Middle"
+                        type="Navigation"
+                        press=".onColPress"
+                    >
                         <cells>
-                            <Image
+                            <Avatar
                                 src="{Photo}"
-                                width="48px"
-                                height="48px"
+                                displaySize="S"
                             />
                             <ObjectIdentifier title="{ID}" />
                             <Text text="{Name}" />
@@ -282,11 +276,8 @@
                             <ObjectAttribute text="{ReleaseYear}" />
 
                             <ObjectNumber
-                                number="{
-								    parts:[{path:'PriceAmount'},{path:'PriceCurrency'}],
-								    type: 'sap.ui.model.type.Currency',
-                                    formatOptions: {showMeasure: true}
-									}"
+                                unit="{PriceCurrency}"
+                                number="{PriceAmount}"
                             />
                         </cells>
                     </ColumnListItem>
