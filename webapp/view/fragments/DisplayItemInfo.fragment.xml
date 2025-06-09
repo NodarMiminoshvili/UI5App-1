@@ -1,0 +1,56 @@
+<core:FragmentDefinition
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.uxap"
+    xmlns:m="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:forms="sap.ui.layout.form"
+>
+    <ObjectPageSection id="displayFragment">
+        <subSections>
+            <ObjectPageSubSection
+                title="General Information"
+                showTitle="false"
+            >
+                <blocks>
+                    <forms:SimpleForm
+                        class="sapUxAPObjectPageSubSectionAlignContent"
+                        layout="ColumnLayout"
+                        columnsM="2"
+                        columnsL="3"
+                        columnsXL="4"
+                    >
+                        <m:Label text="ID" />
+                        <m:Text text="{/Car/ID}" />
+
+                        <m:Label text="{i18n>name}" />
+                        <m:Text text="{/Car/Name}" />
+
+                        <m:Label text="{i18n>supplier}" />
+                        <m:Text text="{/Car/Supplier}" />
+
+                        <m:Label text="{i18n>category}" />
+                        <m:Text text="{/Car/Category}" />
+
+                        <m:Label text="{i18n>availability}" />
+                        <m:ObjectStatus
+                            text="{/Car/Status}"
+                            state="{path: '/Car/Status', formatter: '.formatter.statusToState'}"
+                        />
+
+                        <m:Label text="{i18n>engine}" />
+                        <m:Text text="{/Car/Engine}" />
+
+                        <m:Label text="{i18n>price}" />
+                        <m:ObjectNumber
+                            unit="{/Car/PriceCurrency}"
+                            number="{/Car/PriceAmount}"
+                        />
+
+                        <m:Label text="Release Year" />
+                        <m:Text text="{/Car/ReleaseYear}" />
+                    </forms:SimpleForm>
+                </blocks>
+            </ObjectPageSubSection>
+        </subSections>
+    </ObjectPageSection>
+</core:FragmentDefinition>

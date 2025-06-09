@@ -8,6 +8,15 @@ sap.ui.define([], function () {
 
   return {
     /**
+     * Route name constants used for navigation.
+     * @enum {string}
+     */
+    Routes: {
+      CAR_DETAILS: "CarDetails",
+      CAR_LIST: "CarList",
+    },
+
+    /**
      * Icon URI constants for sorting buttons.
      * @enum {string}
      */
