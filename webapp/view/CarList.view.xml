@@ -4,8 +4,6 @@
     xmlns="sap.m"
     xmlns:f="sap.f"
     xmlns:fb="sap.ui.comp.filterbar"
-    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-    core:require="{formatter: 'nodar/miminoshvili/model/formatter',formatMessage: 'sap/base/strings/formatMessage'}"
     controllerName="nodar.miminoshvili.controller.CarList"
     height="100%"
 >
@@ -33,7 +31,10 @@
                                 visibleInFilterBar="true"
                             >
                                 <fb:control>
-                                    <SearchField search=".onSearch" />
+                                    <SearchField
+                                        search=".onSearch"
+                                        id="searchField"
+                                    />
                                 </fb:control>
                             </fb:FilterGroupItem>
                             <fb:FilterGroupItem
@@ -70,7 +71,7 @@
                                         name="Category"
                                         selectionChange=".onMultiComboBoxChange"
                                         items="{
-												path: '/CarCategories',
+												path: '/Categories',
 												templateShareable: true
 											}"
                                     >
@@ -116,87 +117,51 @@
 							    'i18n>cars',
 							    '/Count'
 						        ],
-						        formatter: 'formatMessage'
+						        formatter: '.Formatter.formatMessage'
                             }"
                         />
                         <ToolbarSpacer />
                         <Button
-                            text="{i18n>add}"
+                            text="{i18n>create}"
                             press=".onOpenProductForm"
+                            id="createButton"
                         />
                         <Button
+                            id="deleteButton"
                             text="{i18n>delete}"
-                            enabled="{deleteButtonStateModel>/enabled}"
-                            press=".onOpenItemDeleteDialog"
+                            enabled="{appState>/DeleteButton/Enabled}"
+                            press="handleDeletePress"
+                        />
+                        <Button
+                            tooltip="Sort"
+                            icon="sap-icon://sort"
+                            press="handleSortButtonPressed"
                         />
                     </OverflowToolbar>
                 </headerToolbar>
                 <columns>
-                    <Column>
+                    <Column hAlign="Center">
                         <Text text="{i18n>photo}" />
                     </Column>
                     <Column
                         minScreenWidth="Medium"
                         demandPopin="true"
+                        hAlign="Left"
                     >
-                        <HBox alignItems="Center">
-                            <Text
-                                text="{i18n>product}"
-                                class="sapUiSmallMarginEnd"
-                            />
-                            <Button
-                                press="onSort"
-                                app:field="ID"
-                                icon="{
-                                    parts:[
-                                        {value: 'ID'},
-                                        {path: 'sortModel>/sorter'}
-                                        ],
-                                    formatter: 'formatter.formatSortIcon'
-                                    }"
-                            />
-                        </HBox>
+                        <Text text="{i18n>product}" />
                     </Column>
-                    <Column>
-                        <HBox alignItems="Center">
-                            <Text
-                                text="{i18n>name}"
-                                class="sapUiSmallMarginEnd"
-                            />
-                            <Button
-                                press="onSort"
-                                app:field="Name"
-                                icon="{
-                                    parts: [
-                                    {value: 'Name'},
-                                    {path: 'sortModel>/sorter'}],
-                                    formatter: 'formatter.formatSortIcon'
-                                    }"
-                            />
-                        </HBox>
+                    <Column hAlign="Left">
+                        <Text text="{i18n>name}" />
                     </Column>
                     <Column
+                        hAlign="Left"
                         minScreenWidth="Large"
                         demandPopin="true"
                     >
-                        <HBox alignItems="Center">
-                            <Text
-                                text="{i18n>supplier}"
-                                class="sapUiSmallMarginEnd"
-                            />
-                            <Button
-                                press="onSort"
-                                app:field="Supplier"
-                                icon="{
-                                    parts: [
-                                    {value: 'Supplier'},
-                                    {path: 'sortModel>/sorter'}],
-                                    formatter: 'formatter.formatSortIcon'
-                                    }"
-                            />
-                        </HBox>
+                        <Text text="{i18n>supplier}" />
                     </Column>
                     <Column
+                        hAlign="Left"
                         minScreenWidth="XXLarge"
                         demandPopin="true"
                     >
@@ -204,6 +169,7 @@
                     </Column>
 
                     <Column
+                        hAlign="Left"
                         minScreenWidth="1250px"
                         demandPopin="true"
                     >
@@ -212,50 +178,20 @@
                     <Column
                         minScreenWidth="Desktop"
                         demandPopin="true"
-                        vAlign="Middle"
+                        hAlign="Right"
                     >
-                        <HBox alignItems="Center">
-                            <Text
-                                text="{i18n>releaseYear}"
-                                class="sapUiSmallMarginEnd"
-                            />
-                            <Button
-                                press="onSort"
-                                app:field="ReleaseYear"
-                                icon="{
-                                    parts: [
-                                    {value: 'ReleaseYear'},
-                                    {path: 'sortModel>/sorter'}],
-                                    formatter: 'formatter.formatSortIcon'
-                                    }"
-                            />
-                        </HBox>
+                        <Text text="{i18n>releaseYear}" />
                     </Column>
                     <Column
                         minScreenWidth="Small"
                         demandPopin="true"
+                        hAlign="Right"
                     >
-                        <HBox alignItems="Center">
-                            <Text
-                                text="{i18n>price}"
-                                class="sapUiSmallMarginEnd"
-                            />
-                            <Button
-                                press="onSort"
-                                app:field="PriceAmount"
-                                icon="{
-                                    parts: [
-                                    {value: 'PriceAmount'},
-                                    {path: 'sortModel>/sorter'}],
-                                    formatter: 'formatter.formatSortIcon'
-                                    }"
-                            />
-                        </HBox>
+                        <Text text="{i18n>price}" />
                     </Column>
                 </columns>
                 <items>
                     <ColumnListItem
-                        vAlign="Middle"
                         type="Navigation"
                         press=".onColPress"
                     >
@@ -270,7 +206,7 @@
                             <Text text="{Category}" />
                             <ObjectStatus
                                 text="{Status}"
-                                state="{path: 'Status', formatter: 'formatter.statusToState'}"
+                                state="{path: 'Status', formatter: '.Formatter.statusToState'}"
                             />
 
                             <ObjectAttribute text="{ReleaseYear}" />

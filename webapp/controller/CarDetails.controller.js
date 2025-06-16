@@ -1,148 +1,160 @@
 sap.ui.define(
   [
-    "sap/ui/core/mvc/Controller",
+    "nodar/miminoshvili/controller/BaseController",
     "sap/ui/model/json/JSONModel",
-    "nodar/miminoshvili/utils/Constants",
-    "nodar/miminoshvili/model/formatter",
+    "nodar/miminoshvili/utils/constants",
     "sap/m/MessageBox",
     "sap/m/MessageToast",
+    "sap/ui/model/Sorter",
   ],
 
-  (Controller, JSONModel, Constants, formatter, MessageBox, MessageToast) => {
+  (BaseController, JSONModel, Constants, MessageBox, MessageToast, Sorter) => {
     "use strict";
 
-    return Controller.extend("nodar.miminoshvili.controller.StoresOverview", {
-      formatter,
-      onInit() {
-        this.getOwnerComponent()
-          .getRouter()
-          .getRoute(Constants.Routes.CAR_DETAILS)
-          .attachPatternMatched(this.onPatternMatched.bind(this));
-      },
+    return BaseController.extend(
+      "nodar.miminoshvili.controller.StoresOverview",
+      {
+        onInit() {
+          this.getOwnerComponent()
+            .getRouter()
+            .getRoute(Constants.Routes.CAR_DETAILS)
+            .attachPatternMatched(this.onPatternMatched.bind(this));
+        },
 
-      onPatternMatched(oEvent) {
-        const { carId: sCarId } = oEvent.getParameter("arguments");
+        onPatternMatched(oEvent) {
+          const { carId: sCarId } = oEvent.getParameter("arguments");
 
-        const {
-          Cars: aCars,
-          MaintenanceHistorySet: aMaintenanceHistorySet,
-          Categories,
-        } = this.getOwnerComponent().getModel().getData();
+          const {
+            Cars: aCars,
+            MaintenanceHistorySet: aMaintenanceHistorySet,
+            Categories,
+            Suppliers,
+          } = this.getOwnerComponent().getModel().getData();
 
-        const oSelectedCar = aCars.find((car) => car.ID === sCarId);
-        const aSelectedCarMaintenanceHistory = aMaintenanceHistorySet.filter(
-          (set) => set.CarID === sCarId
-        );
+          const oSelectedCar = aCars.find((car) => car.ID === sCarId);
+          const aSelectedCarMaintenanceHistory = aMaintenanceHistorySet.filter(
+            (set) => set.CarID === sCarId
+          );
 
-        const oCarModel = {
-          Car: oSelectedCar,
-          MaintenanceHistory: aSelectedCarMaintenanceHistory,
-          Categories,
-        };
+          const oCarModel = {
+            Car: oSelectedCar,
+            MaintenanceHistory: aSelectedCarMaintenanceHistory,
+            Categories,
+            Suppliers,
+            EditMode: false,
+          };
 
-        const oModel = new JSONModel(oCarModel);
-        this.getView().setModel(oModel);
+          const oModel = new JSONModel(oCarModel);
+          this.getView().setModel(oModel);
+        },
 
-        if (this._oChangeForm) {
+        handleEditPress() {
+          this._toggleEditMode(true);
+          const oModel = this.getView().getModel();
+          const oCarBeforeEdit = oModel.getProperty("/Car");
+          oModel.setProperty("/EditedCar", { ...oCarBeforeEdit });
+        },
+
+        handleCancelPress() {
           this._toggleEditMode(false);
-        } else {
-          this._insertDisplayForm();
-        }
-      },
+        },
 
-      async _insertDisplayForm() {
-        this._oDisplayForm ??= await this.loadFragment({
-          name: "nodar.miminoshvili.view.fragments.DisplayItemInfo",
-        });
+        handleSavePress() {
+          const bIsValid = this._validateFormFields(this.byId("form"));
+          if (!bIsValid) return;
 
-        this.byId("ObjectPageLayout").insertSection(this._oDisplayForm);
-      },
+          this._toggleEditMode(false);
 
-      async _insertChangeForm() {
-        this._oChangeForm ??= await this.loadFragment({
-          name: "nodar.miminoshvili.view.fragments.ChangeItemInfo",
-        });
+          const oEditedCar = this.getView()
+            .getModel()
+            .getProperty("/EditedCar");
+          this.getView().getModel().setProperty("/Car", oEditedCar);
 
-        this.byId("ObjectPageLayout").insertSection(this._oChangeForm);
-      },
+          const aUpdatedCars = this.getOwnerComponent()
+            .getModel()
+            .getProperty("/Cars")
+            .map((car) => (car.ID === oEditedCar.ID ? oEditedCar : car));
 
-      handleEditPress() {
-        this._toggleEditMode(true);
-        const oModel = this.getView().getModel();
-        const oCarBeforeEdit = oModel.getProperty("/Car");
-        oModel.setProperty("/EditedCar", { ...oCarBeforeEdit });
-      },
+          this.getOwnerComponent()
+            .getModel()
+            .setProperty("/Cars", aUpdatedCars);
+        },
 
-      handleCancelPress() {
-        this._toggleEditMode(false);
-      },
+        async handleDeletePress() {
+          const { ID: sCarId, Name: sName } = this.getView()
+            .getModel()
+            .getProperty("/Car");
 
-      handleSavePress() {
-        this._toggleEditMode(false);
+          const sMessage = await this._generateItemDeletionQuestion(
+            sCarId,
+            sName
+          );
 
-        const oEditedCar = this.getView().getModel().getProperty("/EditedCar");
-        this.getView().getModel().setProperty("/Car", oEditedCar);
+          MessageBox.confirm(sMessage, {
+            title: await this._getText("deletionMessageBoxTitle"),
+            icon: MessageBox.Icon.WARNING,
+            actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+            emphasizedAction: MessageBox.Action.DELETE,
+            onClose: (sAction) => {
+              if (sAction !== MessageBox.Action.DELETE) return;
 
-        const aUpdatedCars = this.getOwnerComponent()
-          .getModel()
-          .getProperty("/Cars")
-          .map((car) => (car.ID === oEditedCar.ID ? oEditedCar : car));
+              this._handleDeleteCar(sCarId);
+            },
+            dependentOn: this.getView(),
+          });
+        },
 
-        this.getOwnerComponent().getModel().setProperty("/Cars", aUpdatedCars);
-      },
+        _generateItemDeletionQuestion(sId, sName) {
+          return this._getText("singleItemDeletionMessage", [sId, sName]);
+        },
 
-      handleDeletePress() {
-        MessageBox.confirm("Delete this Car?", {
-          actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
-          emphasizedAction: MessageBox.Action.DELETE,
-          onClose: (sAction) => {
-            sAction === "DELETE"
-              ? this._handleDeleteCar()
-              : MessageToast.show("Deletion Canceled");
-          },
-          dependentOn: this.getView(),
-        });
-      },
+        _handleDeleteCar(sCarId) {
+          const oParentModel = this.getOwnerComponent().getModel();
+          const aFilteredCars = oParentModel
+            .getProperty("/Cars")
+            .filter((car) => car.ID !== sCarId);
 
-      _handleDeleteCar() {
-        const { ID: sCarId } = this.getView().getModel().getProperty("/Car");
+          oParentModel.setProperty("/Cars", aFilteredCars);
 
-        const oParentModel = this.getOwnerComponent().getModel();
-        const aFilteredCars = oParentModel
-          .getProperty("/Cars")
-          .filter((car) => car.ID !== sCarId);
+          this._displayDeletionToast();
 
-        oParentModel.setProperty("/Cars", aFilteredCars);
+          setTimeout(() => {
+            this.getOwnerComponent()
+              .getRouter()
+              .navTo(Constants.Routes.CAR_LIST);
+          }, 750);
+        },
 
-        MessageToast.show("Car Deleted Succesfully");
-        setTimeout(() => {
+        async _displayDeletionToast(iDeletedItemsCount) {
+          MessageToast.show(await this._getText("singleItemDeletionToast"));
+        },
+
+        _toggleEditMode(bEditMode) {
+          this.getView().getModel().setProperty("/EditMode", bEditMode);
+        },
+
+        onCarListPress() {
           this.getOwnerComponent().getRouter().navTo(Constants.Routes.CAR_LIST);
-        }, 1000);
-      },
+        },
 
-      _toggleEditMode(bEditMode) {
-        this._toggleEditModeButtons(bEditMode);
-        this._toggleEditModeFragments(bEditMode);
-      },
+        async handleSortButtonPressed() {
+          this._oSortDialogFragment ??= await this.loadFragment({
+            name: "nodar.miminoshvili.view.fragments.CarDetailsSortDialog",
+          });
 
-      _toggleEditModeButtons(bEditMode) {
-        this.byId("editButton").setVisible(!bEditMode);
-        this.byId("deleteButton").setVisible(!bEditMode);
-        this.byId("saveButton").setVisible(bEditMode);
-        this.byId("cancelButton").setVisible(bEditMode);
-      },
+          this._oSortDialogFragment.open();
+        },
 
-      _toggleEditModeFragments(bEditMode) {
-        this.byId("ObjectPageLayout").removeSection(
-          bEditMode ? this._oDisplayForm : this._oChangeForm
-        );
+        handleSortDialogConfirm(oEvent) {
+          const mParams = oEvent.getParameters();
+          const sPath = mParams.sortItem.getKey();
+          const bDescending = mParams.sortDescending;
 
-        bEditMode ? this._insertChangeForm() : this._insertDisplayForm();
-      },
-
-      onCarListPress() {
-        this.getOwnerComponent().getRouter().navTo(Constants.Routes.CAR_LIST);
-      },
-    });
+          this.byId("maintenanceHistoryTable")
+            .getBinding("items")
+            .sort(new Sorter(sPath, bDescending));
+        },
+      }
+    );
   }
 );

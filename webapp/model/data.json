@@ -22,6 +22,65 @@
       "Category": "Other"
     }
   ],
+  "Suppliers": [
+    {
+      "Supplier": "Toyota Motors"
+    },
+    {
+      "Supplier": "Honda Motors"
+    },
+    {
+      "Supplier": "Ford Motor Co."
+    },
+    {
+      "Supplier": "BMW AG"
+    },
+    {
+      "Supplier": "Tesla Inc."
+    },
+    {
+      "Supplier": "Chevrolet"
+    },
+    {
+      "Supplier": "Nissan Motors"
+    },
+    {
+      "Supplier": "Audi AG"
+    },
+    {
+      "Supplier": "Mercedes-Benz"
+    },
+    {
+      "Supplier": "Subaru"
+    },
+    {
+      "Supplier": "Jeep"
+    },
+    {
+      "Supplier": "Hyundai"
+    },
+    {
+      "Supplier": "Lexus"
+    },
+    {
+      "Supplier": "Volkswagen"
+    },
+    {
+      "Supplier": "Kia Motors"
+    },
+    {
+      "Supplier": "Porsche"
+    },
+    {
+      "Supplier": "Ram Trucks"
+    },
+    {
+      "Supplier": "Volvo"
+    },
+    {
+      "Supplier": "Mini"
+    }
+  ],
   "Cars": [
     {
       "ID": "C001",

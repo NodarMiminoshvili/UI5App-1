@@ -1,17 +1,20 @@
 <core:FragmentDefinition
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.uxap"
-    xmlns:m="sap.m"
+    xmlns:uxap="sap.uxap"
+    xmlns="sap.m"
     xmlns:core="sap.ui.core"
     xmlns:forms="sap.ui.layout.form"
 >
-    <ObjectPageSection id="displayFragment">
-        <subSections>
-            <ObjectPageSubSection
+    <uxap:ObjectPageSection
+        id="displayFragment"
+        visible="{= !%{/EditMode}}"
+    >
+        <uxap:subSections>
+            <uxap:ObjectPageSubSection
                 title="General Information"
                 showTitle="false"
             >
-                <blocks>
+                <uxap:blocks>
                     <forms:SimpleForm
                         class="sapUxAPObjectPageSubSectionAlignContent"
                         layout="ColumnLayout"
@@ -19,38 +22,32 @@
                         columnsL="3"
                         columnsXL="4"
                     >
-                        <m:Label text="ID" />
-                        <m:Text text="{/Car/ID}" />
+                        <Label text="ID" />
+                        <Text text="{/Car/ID}" />
 
-                        <m:Label text="{i18n>name}" />
-                        <m:Text text="{/Car/Name}" />
+                        <Label text="{i18n>name}" />
+                        <Text text="{/Car/Name}" />
 
-                        <m:Label text="{i18n>supplier}" />
-                        <m:Text text="{/Car/Supplier}" />
+                        <Label text="{i18n>supplier}" />
+                        <Text text="{/Car/Supplier}" />
 
-                        <m:Label text="{i18n>category}" />
-                        <m:Text text="{/Car/Category}" />
+                        <Label text="{i18n>category}" />
+                        <Text text="{/Car/Category}" />
 
-                        <m:Label text="{i18n>availability}" />
-                        <m:ObjectStatus
+                        <Label text="{i18n>availability}" />
+                        <ObjectStatus
                             text="{/Car/Status}"
-                            state="{path: '/Car/Status', formatter: '.formatter.statusToState'}"
+                            state="{path: '/Car/Status', formatter: '.Formatter.statusToState'}"
                         />
 
-                        <m:Label text="{i18n>engine}" />
-                        <m:Text text="{/Car/Engine}" />
-
-                        <m:Label text="{i18n>price}" />
-                        <m:ObjectNumber
+                        <Label text="{i18n>price}" />
+                        <ObjectNumber
                             unit="{/Car/PriceCurrency}"
                             number="{/Car/PriceAmount}"
                         />
-
-                        <m:Label text="Release Year" />
-                        <m:Text text="{/Car/ReleaseYear}" />
                     </forms:SimpleForm>
-                </blocks>
-            </ObjectPageSubSection>
-        </subSections>
-    </ObjectPageSection>
+                </uxap:blocks>
+            </uxap:ObjectPageSubSection>
+        </uxap:subSections>
+    </uxap:ObjectPageSection>
 </core:FragmentDefinition>
