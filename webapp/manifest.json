@@ -36,7 +36,9 @@
         "settings": {
           "bundleName": "nodar.miminoshvili.i18n.i18n",
           "async": true,
-          "supportedLocales": ["en"],
+          "supportedLocales": [
+            "en"
+          ],
           "fallbackLocale": ""
         }
       },
@@ -48,13 +50,11 @@
         }
       }
     },
-
     "rootView": {
       "viewName": "nodar.miminoshvili.view.App",
       "type": "XML",
       "id": "app"
     },
-
     "routing": {
       "config": {
         "routerClass": "sap.m.routing.Router",
@@ -64,27 +64,26 @@
         "controlId": "app",
         "controlAggregation": "pages"
       },
-     "routes": [
-			  {
-				"pattern": "",
-				"name": "CarList",
-				"target": "carList"
-			  },
-			  {
-				"pattern": "car/{carId}",
-				"name": "CarDetails",
-				"target": "car"
-			  }
-			  
-			],
-			"targets": {
-			  "carList": {
-				"name": "CarList"
-			  },
-			  "car": {
-				"name": "CarDetails"
-			  }
-			}
-		  }
+      "routes": [
+        {
+          "pattern": "",
+          "name": "CarList",
+          "target": "carList"
+        },
+        {
+          "pattern": "car/{carId}",
+          "name": "CarDetails",
+          "target": "car"
+        }
+      ],
+      "targets": {
+        "carList": {
+          "name": "CarList"
+        },
+        "car": {
+          "name": "CarDetails"
+        }
+      }
+    }
   }
 }
