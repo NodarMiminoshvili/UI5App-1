@@ -1,49 +1,76 @@
 <core:FragmentDefinition
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.uxap"
-    xmlns:m="sap.m"
+    xmlns:uxap="sap.uxap"
+    xmlns="sap.m"
     xmlns:core="sap.ui.core"
     xmlns:forms="sap.ui.layout.form"
 >
-    <ObjectPageSection>
-        <subSections>
-            <ObjectPageSubSection
+    <uxap:ObjectPageSection visible="{/EditMode}">
+        <uxap:subSections>
+            <uxap:ObjectPageSubSection
                 title="General Information"
                 showTitle="false"
             >
-                <blocks>
+                <uxap:blocks>
                     <forms:SimpleForm
                         class="sapUxAPObjectPageSubSectionAlignContent"
                         layout="ColumnLayout"
                         columnsM="2"
                         columnsL="3"
                         columnsXL="4"
+                        id="form"
                     >
-                        <m:Label text="ID" />
-                        <m:Input
+                        <Label text="ID" />
+                        <Input
                             value="{/EditedCar/ID}"
                             editable="false"
+                            required="true"
                         />
 
-                        <m:Label text="{i18n>name}" />
-                        <m:Input value="{/EditedCar/Name}" />
+                        <Label text="{i18n>name}" />
+                        <Input
+                            type="Text"
+                            value="{
+					            path: '/EditedCar/Name',
+					            type: 'sap.ui.model.type.String',
+					            constraints: {
+						            minLength: 3,
+						            maxLength: 25
+					            }
+                            }"
+                            required="true"
+                            valueLiveUpdate="true"
+                        />
 
-                        <m:Label text="{i18n>supplier}" />
-                        <m:Input value="{/EditedCar/Supplier}" />
+                        <Label text="{i18n>supplier}" />
+                        <Select
+                            selectedKey="{/EditedCar/Supplier}"
+                            items="{/Suppliers}"
+                            required="true"
+                        >
+                            <core:Item
+                                key="{Supplier}"
+                                text="{Supplier}"
+                            />
+                        </Select>
 
-                        <m:Label text="{i18n>category}" />
-                        <m:Select
+                        <Label text="{i18n>category}" />
+                        <Select
                             selectedKey="{/EditedCar/Category}"
                             items="{/Categories}"
+                            required="true"
                         >
                             <core:Item
                                 key="{Category}"
                                 text="{Category}"
                             />
-                        </m:Select>
+                        </Select>
 
-                        <m:Label text="{i18n>availability}" />
-                        <m:Select selectedKey="{/EditedCar/Status}">
+                        <Label text="{i18n>availability}" />
+                        <Select
+                            selectedKey="{/EditedCar/Status} "
+                            required="true"
+                        >
                             <core:Item
                                 key="In Stock"
                                 text="{i18n>inStock}"
@@ -53,25 +80,24 @@
                                 key="Out of Stock"
                                 text="{i18n>outOfStock}"
                             />
-                        </m:Select>
-                        <m:Label text="{i18n>engine}" />
-                        <m:Input value="{/EditedCar/Supplier}" />
+                        </Select>
 
-                        <m:Label text="{i18n>price}" />
-                        <m:Input
+                        <Label text="{i18n>price}" />
+                        <Input
+                            type="Number"
                             placeholder="{i18n>itemFormInputPlaceholderForPrice}"
                             value="{
 					            path: '/EditedCar/PriceAmount',
 					            type: 'sap.ui.model.type.Integer',
 					            constraints: {
-						            minimum: 1
+						            minimum: 1000
 					                }
                             }"
                             required="true"
                             valueLiveUpdate="true"
                         />
 
-                        <m:Select selectedKey="{/EditedCar/PriceCurrency}">
+                        <Select selectedKey="{/EditedCar/PriceCurrency}">
                             <core:Item
                                 key="USD"
                                 text="USD"
@@ -80,17 +106,10 @@
                                 key="EUR"
                                 text="EUR"
                             />
-                        </m:Select>
-
-                        <m:Label text="Release Year" />
-
-                        <m:Input
-                            value="{/EditedCar/ReleaseYear}"
-                            editable="false"
-                        />
+                        </Select>
                     </forms:SimpleForm>
-                </blocks>
-            </ObjectPageSubSection>
-        </subSections>
-    </ObjectPageSection>
+                </uxap:blocks>
+            </uxap:ObjectPageSubSection>
+        </uxap:subSections>
+    </uxap:ObjectPageSection>
 </core:FragmentDefinition>

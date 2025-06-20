@@ -1,99 +1,42 @@
 sap.ui.define(
   [
-    "sap/ui/core/mvc/Controller",
+    "nodar/miminoshvili/controller/BaseController",
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/Sorter",
-    "nodar/miminoshvili/utils/Constants",
+    "nodar/miminoshvili/utils/constants",
+    "sap/m/MessageBox",
+    "sap/m/MessageToast",
+    "sap/ui/core/library",
   ],
 
-  (Controller, JSONModel, Filter, FilterOperator, Sorter, Constants) => {
+  (
+    BaseController,
+    JSONModel,
+    Filter,
+    FilterOperator,
+    Sorter,
+    Constants,
+    MessageBox,
+    MessageToast,
+    CoreLibrary
+  ) => {
     "use strict";
 
-    return Controller.extend("nodar.miminoshvili.controller.CarList", {
-      /**
-       * @description Initializes the controller, setting up filters, sorting, and categories.
-       */
+    return BaseController.extend("nodar.miminoshvili.controller.CarList", {
       onInit() {
+        this._initAppState();
         this.oActiveFilters = {};
-        this.initSortState();
-        this.initDeleteButtonState();
 
         const oModel = this.getOwnerComponent().getModel();
         const aItems = oModel.getProperty("/Cars");
         oModel.setProperty("/Count", aItems.length);
-        this._insertCategories(oModel, aItems);
-        this._insertSuppliers(oModel, aItems);
       },
 
-      /**
-       * @description Executes actions after the view has been rendered, binding the table items.
-       */
-      onAfterRendering() {
-        this.oBinding = this.getView().byId("table").getBinding("items");
-      },
-
-      /**
-       * @description Inserts unique car categories into the model, adding "Other" as an additional category.
-       * @param {sap.ui.model.Model} oModel The model to update.
-       * @param {Array} aItems List of car items.
-       */
-      _insertCategories(oModel, aItems) {
-        const aCategories = aItems.reduce((prev, curr) => {
-          if (prev.includes(curr.Category)) return prev;
-          return [...prev, curr.Category];
-        }, []);
-
-        oModel.setProperty(
-          "/CarCategories",
-          [...aCategories, "Other"].map((sCategory) => {
-            return { Category: sCategory };
-          })
-        );
-      },
-
-      /**
-       * @description Inserts unique suppliers into the model.
-       * @param {sap.ui.model.Model} oModel The model to update.
-       * @param {Array} aItems List of car items.
-       */
-      _insertSuppliers(oModel, aItems) {
-        const aSuppliers = aItems.reduce((prev, curr) => {
-          if (prev.includes(curr.Supplier)) return prev;
-          return [...prev, curr.Supplier];
-        }, []);
-
-        oModel.setProperty(
-          "/Suppliers",
-          aSuppliers.map((sSupplier) => {
-            return { Supplier: sSupplier };
-          })
-        );
-      },
-
-      /**
-       * @description Adds a new supplier to the model if it doesn't already exist.
-       * @param {sap.ui.model.Model} oModel The model to update.
-       * @param {Array} aItems List of car items.
-       * @param {string} sSupplier Supplier name.
-       */
-      _addSupplier(oModel, aItems, sSupplier) {
-        if (aItems.find((oItem) => oItem.Supplier === sSupplier)) return;
-
-        const prevSuppliers = oModel.getProperty("/Suppliers");
-        oModel.setProperty("/Suppliers", [
-          ...prevSuppliers,
-          { Supplier: sSupplier },
-        ]);
-      },
-
-      /**
-       * @description Handles the change event of the MultiComboBox to apply category filters.
-       * @param {sap.ui.base.Event} oEvent The change event.
-       */
       onMultiComboBoxChange(oEvent) {
         const aSelectedKeys = oEvent.getSource().getSelectedKeys();
+        const oModel = this.getView().getModel("appState");
 
         if (aSelectedKeys.length > 0) {
           const aFilters = aSelectedKeys.map((_, idx) => {
@@ -109,37 +52,35 @@ sap.ui.define(
             and: false,
           });
 
-          this.oActiveFilters.oCategoryFilter = oCombinedFilter;
+          oModel.setProperty("/ActiveFilters/CategoryFilter", oCombinedFilter);
         } else {
-          delete this.oActiveFilters.oCategoryFilter;
+          const oData = oModel.getData();
+          delete oData.ActiveFilters.CategoryFilter;
+          oModel.setData(oData);
         }
 
         this._applyFilters();
       },
 
-      /**
-       * @description Handles the change event of the ComboBox to apply supplier filters.
-       * @param {sap.ui.base.Event} oEvent The change event.
-       */
       onComboBoxChange(oEvent) {
         const sSelectedKey = oEvent.getSource().getSelectedKey();
+        const oModel = this.getView().getModel("appState");
 
         const oFilter = new Filter("Supplier", FilterOperator.EQ, sSelectedKey);
 
         if (sSelectedKey) {
-          this.oActiveFilters.oSupplierFilter = oFilter;
+          oModel.setProperty("/ActiveFilters/SupplierFilter", oFilter);
         } else {
-          delete this.oActiveFilters.oSupplierFilter;
+          const oData = oModel.getData();
+          delete oData.ActiveFilters.SupplierFilter;
+          oModel.setData(oData);
         }
         this._applyFilters();
       },
 
-      /**
-       * @description Handles the search event to apply query filters.
-       * @param {sap.ui.base.Event} oEvent The search event.
-       */
       onSearch(oEvent) {
         const sQuery = oEvent.getParameter("query");
+        const oModel = this.getView().getModel("appState");
 
         const aFilters = ["ID", "Name", "Supplier"].map((property) => {
           return new Filter(property, FilterOperator.Contains, sQuery);
@@ -150,167 +91,84 @@ sap.ui.define(
           and: false,
         });
 
-        this.oActiveFilters.oQueryFilter = oCombinedFilter;
+        oModel.setProperty("/ActiveFilters/QueryFilter", oCombinedFilter);
 
         this._applyFilters();
       },
 
-      /**
-       * @description Handles the date picker change event to apply release year filters.
-       * @param {sap.ui.base.Event} oEvent The date picker change event.
-       */
       onDatePickerChange(oEvent) {
         const selectedDate = oEvent.getSource().getDateValue();
+        const oModel = this.getView().getModel("appState");
 
         if (selectedDate) {
-          var selectedYear = selectedDate.getFullYear();
+          const selectedYear = selectedDate.getFullYear();
 
-          var oFilter = new Filter({
+          const oFilter = new Filter({
             path: "ReleaseYear",
             operator: FilterOperator.EQ,
             value1: selectedYear.toString(),
           });
 
-          this.oActiveFilters.oReleaseYearFilter = oFilter;
+          oModel.setProperty("/ActiveFilters/ReleaseYearFilter", oFilter);
         } else {
-          delete this.oActiveFilters.oReleaseYearFilter;
+          const oData = oModel.getData();
+          delete oData.ActiveFilters.ReleaseYearFilter;
+          oModel.setData(oData);
         }
         this._applyFilters();
       },
 
-      /**
-       * @description Applies the active filters to the binding of the table.
-       */
       _applyFilters() {
-        const aFilters = Object.values(this.oActiveFilters);
+        const oModel = this.getView().getModel("appState");
+        const aFilters = Object.values(oModel.getProperty("/ActiveFilters"));
+        const oBinding = this.byId("table").getBinding("items");
 
         if (!aFilters.length) {
-          this.oBinding.filter(null);
+          oBinding.filter(null);
           this._trackItemCountChange();
           return;
         }
 
-        this.oBinding.filter(aFilters, true);
+        oBinding.filter(aFilters, true);
         this._trackItemCountChange();
       },
 
-      /**
-       * @description Initializes the sorting state with an empty sorter.
-       */
-      initSortState() {
-        const oSortModel = {
-          sorter: { field: null },
-        };
-
-        const oModel = new JSONModel(oSortModel);
-        this.getView().setModel(oModel, "sortModel");
-      },
-
-      /**
-       * @description Handles the sorting event to toggle between ascending and descending sorting.
-       * @param {sap.ui.base.Event} oEvent The sort event.
-       */
-      onSort(oEvent) {
-        const sField = oEvent.getSource().data("field");
-        const oSortModel = this.getView().getModel("sortModel");
-
-        const aSortState = this.oBinding.aSorters;
-        const oCurrentSortedField =
-          aSortState && aSortState.find((sorter) => sorter.sPath === sField);
-
-        if (!oCurrentSortedField) {
-          const oSorter = new Sorter(sField, false);
-          oSortModel.setProperty("/sorter", {
-            sField,
-            bDescending: false,
-          });
-          this.oBinding.sort(oSorter);
-
-          return;
-        }
-
-        let oNextSorter;
-        switch (oCurrentSortedField.bDescending) {
-          case true:
-            oNextSorter = null;
-            oSortModel.setProperty("/sorter", {
-              sField: null,
-            });
-            break;
-
-          case false:
-            oNextSorter = new Sorter(sField, true);
-            oSortModel.setProperty("/sorter", {
-              sField,
-              bDescending: true,
-            });
-            break;
-
-          default:
-            oNextSorter = null;
-            oSortModel.setProperty("/sorter", {
-              sField: null,
-            });
-            break;
-        }
-
-        this.oBinding.sort(oNextSorter);
-      },
-
-      /**
-       * @description Initializes the delete button state model with `enabled` set to false.
-       */
-      initDeleteButtonState() {
+      _initAppState() {
         const oModel = new JSONModel({
-          enabled: false,
+          DeleteButton: { Enabled: false },
+          ActiveFilters: {},
         });
 
-        this.getView().setModel(oModel, "deleteButtonStateModel");
+        this.getView().setModel(oModel, "appState");
       },
 
-      /**
-       * @description Handles table selection changes to enable or disable the delete button.
-       * @param {sap.ui.base.Event} oEvent The selection change event.
-       */
       onTableSelectionChange(oEvent) {
         const aSelectedItems = oEvent.getSource().getSelectedItems();
-        if (!aSelectedItems.length) {
-          this.getView()
-            .getModel("deleteButtonStateModel")
-            .setProperty("/enabled", false);
-          return;
-        }
 
         this.getView()
-          .getModel("deleteButtonStateModel")
-          .setProperty("/enabled", true);
+          .getModel("appState")
+          .setProperty("/DeleteButton/Enabled", !!aSelectedItems.length);
       },
 
-      /**
-       * @description Opens the item deletion confirmation dialog.
-       * @param {sap.ui.base.Event} oEvent The open dialog event.
-       */
-      async onOpenItemDeleteDialog(oEvent) {
-        this._oProductDelDialog ??= await this.loadFragment({
-          name: "nodar.miminoshvili.view.fragments.ItemDeleteDialog",
+      async handleDeletePress() {
+        const sMessage = await this._generateItemDeletionQuestion();
+
+        MessageBox.confirm(sMessage, {
+          title: await this._getText("deletionMessageBoxTitle"),
+          icon: MessageBox.Icon.WARNING,
+          actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+          emphasizedAction: MessageBox.Action.DELETE,
+          onClose: (sAction) => {
+            if (sAction !== MessageBox.Action.DELETE) return;
+
+            this._onConfirmItemDelete();
+          },
+          dependentOn: this.getView(),
         });
-        this._oProductDelDialog.open();
-        const oContext = oEvent.getSource().getBindingContext();
-        this._oProductDelDialog.setBindingContext(oContext);
       },
 
-      /**
-       * @description Closes the item deletion confirmation dialog without making any changes.
-       */
-      onCancelItemDelete() {
-        this._oProductDelDialog.close();
-      },
-
-      /**
-       * @description Confirms the item deletion, updates the model, and removes selected items.
-       */
-      async onConfirmItemDelete() {
-        const oTable = this.getView().byId("table");
+      _onConfirmItemDelete() {
+        const oTable = this.byId("table");
         const aSelectedItems = oTable.getSelectedItems();
 
         const oModel = this.getView().getModel();
@@ -333,18 +191,46 @@ sap.ui.define(
         oModel.setProperty("/Cars", aFilteredItems);
 
         this.getView()
-          .getModel("deleteButtonStateModel")
-          .setProperty("/enabled", false);
+          .getModel("appState")
+          .setProperty("/DeleteButton/Enabled", false);
 
         oTable.removeSelections();
-        this._oProductDelDialog.close();
         this._trackItemCountChange();
+        this._displayDeletionToast(aSelectedItems.length);
       },
 
-      /**
-       * @description Opens the product form dialog to create a new item.
-       */
+      async _displayDeletionToast(iDeletedItemsCount) {
+        MessageToast.show(
+          iDeletedItemsCount > 1
+            ? await this._getText("multipleItemDeletionToast", [
+                iDeletedItemsCount,
+              ])
+            : await this._getText("singleItemDeletionToast")
+        );
+      },
+
+      _generateItemDeletionQuestion() {
+        const oTable = this.byId("table");
+        const iSelectedItemsLength = oTable.getSelectedItems().length;
+
+        if (iSelectedItemsLength > 1) {
+          return this._getText("multipleItemDeletionMessage", [
+            iSelectedItemsLength,
+          ]);
+        }
+
+        const { ID: sId, Name: sName } = oTable
+          .getSelectedItem()
+          .getBindingContext()
+          .getObject();
+
+        return this._getText("singleItemDeletionMessage", [sId, sName]);
+      },
+
       async onOpenProductForm() {
+        this._oProductFormDialog &&
+          this._resetFormFieldErrorStates(this.byId("itemFormDialog"));
+
         this._oProductFormDialog ??= await this.loadFragment({
           name: "nodar.miminoshvili.view.fragments.ItemFormDialog",
         });
@@ -366,16 +252,10 @@ sap.ui.define(
         this._oProductFormDialog.open();
       },
 
-      /**
-       * @description Closes the product form dialog without saving the item.
-       */
       onCancelItemCreation() {
         this._oProductFormDialog.close();
       },
 
-      /**
-       * @description Saves the newly created item to the model and updates the suppliers.
-       */
       onSaveItem() {
         const oModel = this.getView().getModel();
 
@@ -397,19 +277,11 @@ sap.ui.define(
           },
         ]);
 
-        this._addSupplier(oModel, aPrevItems, oNewItemModel.Supplier);
-
         this._oProductFormDialog.close();
 
         this._trackItemCountChange();
       },
 
-      /**
-       * Validates input and textarea fields using their data types.
-       * @param {sap.ui.core.Element} oContainer UI container with child fields.
-       * @returns {boolean|void} True if all fields are valid, false or void otherwise.
-       * @protected
-       */
       _validateFormFields(oContainer) {
         const aFields = oContainer.findElements(true);
         let isValid = true;
@@ -431,9 +303,9 @@ sap.ui.define(
 
           try {
             oBinding.getType().validateValue(oControl.getValue());
-            oControl.setValueState("None");
+            oControl.setValueState(CoreLibrary.ValueState.None);
           } catch (e) {
-            oControl.setValueState("Error");
+            oControl.setValueState(CoreLibrary.ValueState.Error);
             oControl.setValueStateText(e.message);
             isValid = false;
           }
@@ -442,22 +314,14 @@ sap.ui.define(
         return isValid;
       },
 
-      /**
-       * @description Generates a unique item ID based on the current number of items in the model.
-       * @param {Array} aPrevItems The previous list of items.
-       * @returns {string} A new unique item ID.
-       * @protected
-       */
       _generateItemId(aPrevItems) {
         return `C${Math.round(Math.random() * 10)}0${aPrevItems.length + 1}`;
       },
 
-      /**
-       * @description Tracks the change in the item count and updates the model.
-       */
       _trackItemCountChange() {
-        const iCount = this.oBinding.getCount();
-        const oModel = this.oBinding.getModel();
+        const oBinding = this.byId("table").getBinding("items");
+        const iCount = oBinding.getCount();
+        const oModel = oBinding.getModel();
         oModel.setProperty("/Count", iCount);
       },
 
@@ -470,6 +334,24 @@ sap.ui.define(
         this.getOwnerComponent()
           .getRouter()
           .navTo(Constants.Routes.CAR_DETAILS, { carId });
+      },
+
+      async handleSortButtonPressed() {
+        this._oSortDialogFragment ??= await this.loadFragment({
+          name: "nodar.miminoshvili.view.fragments.CarListSortDialog",
+        });
+
+        this._oSortDialogFragment.open();
+      },
+
+      handleSortDialogConfirm(oEvent) {
+        const mParams = oEvent.getParameters();
+        const sPath = mParams.sortItem.getKey();
+        const bDescending = mParams.sortDescending;
+
+        this.byId("table")
+          .getBinding("items")
+          .sort(new Sorter(sPath, bDescending));
       },
     });
   }

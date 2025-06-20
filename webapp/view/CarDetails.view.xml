@@ -1,161 +1,160 @@
 <mvc:View
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.uxap"
-    xmlns:m="sap.m"
+    xmlns:uxap="sap.uxap"
+    xmlns="sap.m"
     xmlns:core="sap.ui.core"
     xmlns:forms="sap.ui.layout.form"
     controllerName="nodar.miminoshvili.controller.CarDetails"
     height="100%"
 >
-    <ObjectPageLayout
+    <uxap:ObjectPageLayout
         id="ObjectPageLayout"
         upperCaseAnchorBar="false"
         enableLazyLoading="true"
+        showFooter="{/EditMode}"
     >
-        <headerTitle>
-            <ObjectPageDynamicHeaderTitle>
-                <breadcrumbs>
-                    <m:Breadcrumbs>
-                        <m:Link
+        <uxap:headerTitle>
+            <uxap:ObjectPageDynamicHeaderTitle>
+                <uxap:breadcrumbs>
+                    <Breadcrumbs>
+                        <Link
                             text="{i18n>carListLink}"
                             press=".onCarListPress"
                         />
-                        <m:Link
+                        <Link
                             text="{i18n>carDetailsLink}"
                             enabled="false"
                         />
-                    </m:Breadcrumbs>
-                </breadcrumbs>
-                <expandedHeading>
-                    <m:Title text="{/Car/Name}" />
-                </expandedHeading>
+                    </Breadcrumbs>
+                </uxap:breadcrumbs>
+                <uxap:expandedHeading>
+                    <Title text="{/Car/Name}" />
+                </uxap:expandedHeading>
 
-                <snappedHeading>
-                    <m:HBox>
-                        <m:Avatar
+                <uxap:snappedHeading>
+                    <HBox>
+                        <Avatar
                             src="{/Car/Photo}"
                             class="sapUiMediumMarginEnd"
                             displayShape="Square"
                         />
-                        <m:VBox>
-                            <m:Title text="{/Car/Name}" />
-                            <m:Label text="{/Car/ID}" />
-                        </m:VBox>
-                    </m:HBox>
-                </snappedHeading>
+                        <VBox>
+                            <Title text="{/Car/Name}" />
+                            <Label text="{/Car/ID}" />
+                        </VBox>
+                    </HBox>
+                </uxap:snappedHeading>
 
-                <expandedContent>
-                    <m:Label text="{/Car/ID}" />
-                </expandedContent>
+                <uxap:expandedContent>
+                    <Label text="{/Car/ID}" />
+                </uxap:expandedContent>
 
-                <snappedTitleOnMobile>
-                    <m:Title text="{/Car/Name}" />
-                </snappedTitleOnMobile>
+                <uxap:snappedTitleOnMobile>
+                    <Title text="{/Car/Name}" />
+                </uxap:snappedTitleOnMobile>
 
-                <actions>
-                    <m:Button
-                        id="editButton"
+                <uxap:actions>
+                    <Button
                         text="Edit"
                         type="Emphasized"
                         press="handleEditPress"
+                        visible="{= !%{/EditMode}}"
                     />
-                    <m:Button
-                        id="deleteButton"
+                    <Button
                         text="Delete"
                         press="handleDeletePress"
+                        visible="{= !%{/EditMode}}"
                     />
-                    <m:Button
-                        id="saveButton"
+                    <Button
                         text="Save"
                         type="Emphasized"
-                        visible="false"
                         press="handleSavePress"
+                        visible="{/EditMode}"
                     />
-                    <m:Button
-                        id="cancelButton"
+                    <Button
                         text="Cancel"
-                        visible="false"
                         press="handleCancelPress"
+                        visible="{/EditMode}"
                     />
-                </actions>
-            </ObjectPageDynamicHeaderTitle>
-        </headerTitle>
+                </uxap:actions>
+            </uxap:ObjectPageDynamicHeaderTitle>
+        </uxap:headerTitle>
 
-        <headerContent>
-            <m:FlexBox
+        <uxap:headerContent>
+            <FlexBox
                 wrap="Wrap"
                 fitContainer="true"
             >
-                <m:Avatar
+                <Avatar
                     src="{/Car/Photo}"
                     class="sapUiMediumMarginEnd"
                     displayShape="Square"
                     displaySize="L"
                 />
 
-                <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                    <m:HBox
+                <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                    <HBox
                         class="sapUiTinyMarginBottom"
                         renderType="Bare"
                     >
-                        <m:Label
+                        <Label
                             showColon="true"
                             text="Engine"
                             class="sapUiTinyMarginEnd"
                         />
-                        <m:Text text="{/Car/Engine}" />
-                    </m:HBox>
-                    <m:HBox
+                        <Text text="{/Car/Engine}" />
+                    </HBox>
+                    <HBox
                         class="sapUiTinyMarginBottom"
                         renderType="Bare"
                     >
-                        <m:Label
+                        <Label
                             showColon="true"
                             text="Category"
                             class="sapUiTinyMarginEnd"
                         />
-                        <m:Text text="{/Car/Category}" />
-                    </m:HBox>
+                        <Text text="{/Car/Category}" />
+                    </HBox>
 
-                    <m:HBox>
-                        <m:Label
+                    <HBox>
+                        <Label
                             showColon="true"
                             text="Supplier"
                             class="sapUiTinyMarginEnd"
                         />
-                        <m:Text text="{/Car/Supplier}" />
-                    </m:HBox>
-                </m:VBox>
+                        <Text text="{/Car/Supplier}" />
+                    </HBox>
+                </VBox>
 
-                <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                    <m:Title
+                <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                    <Title
                         text="Avaibility"
                         class="sapUiTinyMarginBottom"
                     />
-                    <m:ObjectStatus
+                    <ObjectStatus
                         text="{/Car/Status}"
-                        state="{path: '/Car/Status', formatter: '.formatter.statusToState'}"
+                        state="{path: '/Car/Status', formatter: '.Formatter.statusToState'}"
                         class="sapMObjectStatusLarge"
                     />
-                </m:VBox>
+                </VBox>
 
-                <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                    <m:Title
+                <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                    <Title
                         text="Release Year"
                         class="sapUiTinyMarginBottom"
                     />
-                    <m:ObjectStatus
+                    <ObjectStatus
                         text="{/Car/ReleaseYear}"
                         class="sapMObjectStatusLarge"
                     />
-                </m:VBox>
+                </VBox>
 
-                <m:VBox class="sapUiLargeMarginEnd">
-                    <m:Title
+                <VBox class="sapUiLargeMarginEnd">
+                    <Title
                         text="Price"
                         class="sapUiTinyMarginBottom"
                     />
-                    <m:ObjectNumber
+                    <ObjectNumber
                         unit="{/Car/PriceCurrency}"
                         number="{
 								parts:[{path:'/Car/PriceAmount'},{path:'/Car/PriceCurrency'}],
@@ -164,75 +163,111 @@
                                 }"
                         class="sapMObjectNumberLarge"
                     />
-                </m:VBox>
-            </m:FlexBox>
-        </headerContent>
+                </VBox>
+            </FlexBox>
+        </uxap:headerContent>
 
-        <sections>
-            <ObjectPageSection
+        <uxap:sections>
+            <core:Fragment
+                fragmentName="nodar.miminoshvili.view.fragments.DisplayItemInfo"
+                type="XML"
+            />
+            <core:Fragment
+                fragmentName="nodar.miminoshvili.view.fragments.ChangeItemInfo"
+                type="XML"
+            />
+            <uxap:ObjectPageSection
                 title="Maintenance History"
                 titleUppercase="false"
             >
-                <subSections>
-                    <ObjectPageSubSection showTitle="false">
-                        <blocks>
-                            <m:Table
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection showTitle="false">
+                        <uxap:blocks>
+                            <Table
                                 class="sapUxAPObjectPageSubSectionAlignContent"
                                 width="auto"
                                 items="{/MaintenanceHistory}"
+                                id="maintenanceHistoryTable"
                             >
-                                <m:columns>
-                                    <m:Column>
-                                        <m:Text text="Service Type" />
-                                    </m:Column>
-                                    <m:Column
+                                <headerToolbar>
+                                    <OverflowToolbar>
+                                        <ToolbarSpacer />
+                                        <Button
+                                            tooltip="Sort"
+                                            icon="sap-icon://sort"
+                                            press="handleSortButtonPressed"
+                                        />
+                                    </OverflowToolbar>
+                                </headerToolbar>
+                                <columns>
+                                    <Column hAlign="Left">
+                                        <Text text="Service Type" />
+                                    </Column>
+                                    <Column
+                                        minScreenWidth="Tablet"
+                                        demandPopin="true"
+                                        hAlign="Right"
+                                    >
+                                        <Text text="Date" />
+                                    </Column>
+                                    <Column
+                                        minScreenWidth="Tablet"
+                                        demandPopin="true"
+                                        hAlign="Left"
+                                    >
+                                        <Text text="Service Center" />
+                                    </Column>
+                                    <Column
+                                        hAlign="Left"
                                         minScreenWidth="Tablet"
                                         demandPopin="true"
                                     >
-                                        <m:Text text="Date" />
-                                    </m:Column>
-                                    <m:Column
-                                        minScreenWidth="Tablet"
-                                        demandPopin="true"
-                                    >
-                                        <m:Text text="Service Center" />
-                                    </m:Column>
-                                    <m:Column
-                                        minScreenWidth="Tablet"
-                                        demandPopin="true"
-                                    >
-                                        <m:Text text="Techician" />
-                                    </m:Column>
-                                    <m:Column hAlign="End">
-                                        <m:Text text="Cost" />
-                                    </m:Column>
-                                </m:columns>
+                                        <Text text="Techician" />
+                                    </Column>
+                                    <Column hAlign="Right">
+                                        <Text text="Cost" />
+                                    </Column>
+                                </columns>
 
-                                <m:items>
-                                    <m:ColumnListItem
+                                <items>
+                                    <ColumnListItem
                                         vAlign="Middle"
                                         press=".onColPress"
                                     >
-                                        <m:cells>
-                                            <!-- <ObjectIdentifier title="{ID}" /> -->
+                                        <cells>
+                                            <Text text="{ServiceType}" />
+                                            <ObjectAttribute text="{Date}" />
+                                            <Text text="{ServiceCenter}" />
+                                            <Text text="{Technician}" />
 
-                                            <m:Text text="{ServiceType}" />
-                                            <m:ObjectAttribute text="{Date}" />
-                                            <m:Text text="{ServiceCenter}" />
-                                            <m:Text text="{Technician}" />
-
-                                            <m:ObjectNumber
+                                            <ObjectNumber
                                                 unit="{Currency}"
                                                 number="{Cost}"
                                             />
-                                        </m:cells>
-                                    </m:ColumnListItem>
-                                </m:items>
-                            </m:Table>
-                        </blocks>
-                    </ObjectPageSubSection>
-                </subSections>
-            </ObjectPageSection>
-        </sections>
-    </ObjectPageLayout>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+        </uxap:sections>
+        <uxap:footer>
+            <OverflowToolbar>
+                <ToolbarSpacer />
+                <Button
+                    text="Save"
+                    type="Emphasized"
+                    press="handleSavePress"
+                    visible="{/EditMode}"
+                />
+                <Button
+                    text="Cancel"
+                    press="handleCancelPress"
+                    visible="{/EditMode}"
+                />
+            </OverflowToolbar>
+        </uxap:footer>
+    </uxap:ObjectPageLayout>
 </mvc:View>
