@@ -13,6 +13,12 @@
                 <f:heading>
                     <Title text="{i18n>carTableTitle}" />
                 </f:heading>
+                <f:expandedContent>
+                    <Label text="{appState>/ExpandedLabel}" />
+                </f:expandedContent>
+                <f:snappedContent>
+                    <Label text="{appState>/SnappedLabel}" />
+                </f:snappedContent>
             </f:DynamicPageTitle>
         </f:title>
 
@@ -68,6 +74,7 @@
                             >
                                 <fb:control>
                                     <MultiComboBox
+                                        id="categoryInput"
                                         name="Category"
                                         selectionChange=".onMultiComboBoxChange"
                                         items="{

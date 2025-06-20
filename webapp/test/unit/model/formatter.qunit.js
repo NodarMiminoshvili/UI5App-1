@@ -9,6 +9,14 @@ sap.ui.define(
 
     QUnit.module("Status State");
 
+    /**
+     * Executes a single status-to-state test case.
+     *
+     * @param {object} oOptions - Test options
+     * @param {QUnit.Assert} oOptions.assert - QUnit assertion object
+     * @param {string} oOptions.status - Product status to format
+     * @param {string} oOptions.expected - Expected ValueState
+     */
     function statusToStateCase(oOptions) {
       const sState = formatter.statusToState(oOptions.status);
 
