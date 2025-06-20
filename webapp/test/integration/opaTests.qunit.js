@@ -16,6 +16,12 @@ sap.ui.define(
       autoWait: true,
     });
 
+    /**
+     * Tests the creation and deletion of a car item in the CarList view.
+     * @param {Object} Given - OPA5 given context
+     * @param {Object} When - OPA5 when context
+     * @param {Object} Then - OPA5 then context
+     */
     opaTest("Should find a Button with an id", function (Given, When, Then) {
       Given.iStartMyAppInAFrame("http://localhost:8080/index.html");
 
@@ -34,8 +40,8 @@ sap.ui.define(
 
       Then.waitFor({
         viewName: "CarList",
-        id: ["nameInput", "priceInput"],
-        actions: new EnterText({ text: "Subaru BRZ" }, { text: "daodada" }),
+        id: "nameInput",
+        actions: new EnterText({ text: "Subaru BRZ" }),
         errorMessage: "Name input is missing",
       });
 
@@ -48,9 +54,9 @@ sap.ui.define(
 
       Then.waitFor({
         viewName: "CarList",
-        id: "priceInput",
+        id: "priceInputControl--innerInput",
         actions: new EnterText({ text: "2900" }),
-        errorMessage: "Supplier input is missing",
+        errorMessage: "Price input is missing",
       });
 
       Then.waitFor({

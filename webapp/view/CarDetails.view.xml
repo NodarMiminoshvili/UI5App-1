@@ -55,24 +55,24 @@
 
                 <uxap:actions>
                     <Button
-                        text="Edit"
+                        text="{i18n>editButton}"
                         type="Emphasized"
                         press="handleEditPress"
                         visible="{= !%{/EditMode}}"
                     />
                     <Button
-                        text="Delete"
+                        text="{i18n>deleteButton}"
                         press="handleDeletePress"
                         visible="{= !%{/EditMode}}"
                     />
                     <Button
-                        text="Save"
+                        text="{i18n>saveButton}"
                         type="Emphasized"
                         press="handleSavePress"
                         visible="{/EditMode}"
                     />
                     <Button
-                        text="Cancel"
+                        text="{i18n>cancelButton}"
                         press="handleCancelPress"
                         visible="{/EditMode}"
                     />
