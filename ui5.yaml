@@ -12,3 +12,24 @@ framework:
     - name: sap.ui.core
     - name: sap.uxap
     - name: themelib_sap_horizon
+server:
+  customMiddleware:
+    - name: ui5-middleware-proxy
+      # IMPORTANT: You must specify when the middleware should run.
+      # 'beforeMiddleware' makes it run before standard UI5 middlewares.
+      # 'afterMiddleware' makes it run after standard UI5 middlewares.
+      # For a proxy, 'beforeMiddleware: serveResources' is a good choice
+      # to ensure it intercepts requests before UI5 tries to serve local files.
+      beforeMiddleware: serveResources # Or 'compression', 'latest' etc. 'serveResources' is a common safe choice.
+      # If that doesn't work, try 'afterMiddleware: compression'
+      # afterMiddleware: compression # Alternative if 'beforeMiddleware' causes issues
+
+      mountPath: /V2 # This is the path your UI5 app will call (e.g., /V2/OData/OData.svc)
+      configuration:
+        target: https://services.odata.org/
+        # If you need to rewrite paths, you can use a pathRewrite function
+        # pathRewrite:
+        #   '/V2/': '/' # Example: if the proxy mounts at /V2 but the target needs just /
+        strictSSL: false # Set to true in production if target has valid SSL cert
+        changeOrigin: true # Important for external services
+        debug: true

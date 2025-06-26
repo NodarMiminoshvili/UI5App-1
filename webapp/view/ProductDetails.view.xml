@@ -1,0 +1,196 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:uxap="sap.uxap"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:forms="sap.ui.layout.form"
+    controllerName="nodar.miminoshvili.controller.ProductDetails"
+    height="100%"
+>
+    <uxap:ObjectPageLayout
+        upperCaseAnchorBar="false"
+        enableLazyLoading="true"
+        showFooter="{appState>/EditMode}"
+    >
+        <uxap:headerTitle>
+            <uxap:ObjectPageDynamicHeaderTitle>
+                <uxap:breadcrumbs>
+                    <Breadcrumbs>
+                        <Link
+                            text="{i18n>productListLink}"
+                            press=".onProductListPress"
+                        />
+                        <Link
+                            text="{i18n>productDetailsLink}"
+                            enabled="false"
+                        />
+                    </Breadcrumbs>
+                </uxap:breadcrumbs>
+                <uxap:expandedHeading>
+                    <Title text="{Name}" />
+                </uxap:expandedHeading>
+
+                <uxap:snappedHeading>
+                    <HBox>
+                        <Avatar
+                            class="sapUiMediumMarginEnd"
+                            displayShape="Square"
+                        />
+                        <VBox>
+                            <Title text="{Name}" />
+                            <Label text="{ID}" />
+                        </VBox>
+                    </HBox>
+                </uxap:snappedHeading>
+
+                <uxap:expandedContent>
+                    <Label text="{ID}" />
+                </uxap:expandedContent>
+
+                <uxap:snappedTitleOnMobile>
+                    <Title text="{Name}" />
+                </uxap:snappedTitleOnMobile>
+
+                <uxap:actions>
+                    <Button
+                        text="{i18n>editButton}"
+                        type="Emphasized"
+                        press="handleEditPress"
+                        visible="{= !%{appState>/EditMode}}"
+                    />
+                    <Button
+                        text="{i18n>deleteButton}"
+                        press="handleDeletePress"
+                        visible="{= !%{appState>/EditMode}}"
+                    />
+                    <Button
+                        text="{i18n>saveButton}"
+                        type="Emphasized"
+                        press="handleSavePress"
+                        visible="{appState>/EditMode}"
+                    />
+                    <Button
+                        text="{i18n>cancelButton}"
+                        press="handleCancelPress"
+                        visible="{appState>/EditMode}"
+                    />
+                </uxap:actions>
+            </uxap:ObjectPageDynamicHeaderTitle>
+        </uxap:headerTitle>
+
+        <uxap:headerContent>
+            <FlexBox
+                wrap="Wrap"
+                fitContainer="true"
+            >
+                <Avatar
+                    class="sapUiMediumMarginEnd"
+                    displayShape="Square"
+                    displaySize="L"
+                />
+
+                <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                    <HBox
+                        class="sapUiTinyMarginBottom"
+                        renderType="Bare"
+                    >
+                        <Label
+                            showColon="true"
+                            text="{i18n>discontinuedDate}"
+                            class="sapUiTinyMarginEnd"
+                        />
+                        <ObjectStatus
+                            text="{ 
+                                    path: 'DiscontinuedDate',
+                                    type: 'sap.ui.model.type.Date',
+                                    formatOptions: { style: 'medium' },
+                                    formatter: '.Formatter.formatDiscontinuedDate'
+                                }"
+                            state="{path: 'DiscontinuedDate', formatter: '.Formatter.dateToState'}"
+                        />
+                    </HBox>
+                    <HBox
+                        class="sapUiTinyMarginBottom"
+                        renderType="Bare"
+                    >
+                        <Label
+                            showColon="true"
+                            text="{i18n>category}"
+                            class="sapUiTinyMarginEnd"
+                        />
+                        <Text text="{Category/Name}" />
+                    </HBox>
+
+                    <HBox>
+                        <Label
+                            showColon="true"
+                            text="{i18n>supplier}"
+                            class="sapUiTinyMarginEnd"
+                        />
+                        <Text text="{Supplier/Name}" />
+                    </HBox>
+                </VBox>
+
+                <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                    <Title
+                        text="{i18n>releaseDate}"
+                        class="sapUiTinyMarginBottom"
+                    />
+                    <ObjectStatus
+                        class="sapMObjectStatusLarge"
+                        text="{ 
+                                path: 'ReleaseDate',
+                                type: 'sap.ui.model.type.Date',
+                                formatOptions: { style: 'medium' } 
+                            }"
+                    />
+                </VBox>
+
+                <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                    <Title text="{i18n>rating}" />
+                    <RatingIndicator
+                        value='{Rating}'
+                        displayOnly="true"
+                    />
+                </VBox>
+
+                <VBox class="sapUiLargeMarginEnd">
+                    <Title
+                        text="{i18n>price}"
+                        class="sapUiTinyMarginBottom"
+                    />
+                    <ObjectNumber
+                        unit="{i18n>usd}"
+                        number="{Price}"
+                        class="sapMObjectNumberLarge"
+                    />
+                </VBox>
+            </FlexBox>
+        </uxap:headerContent>
+
+        <uxap:sections>
+            <core:Fragment
+                fragmentName="nodar.miminoshvili.view.fragments.DisplayItemInfo"
+                type="XML"
+            />
+            <core:Fragment
+                fragmentName="nodar.miminoshvili.view.fragments.ChangeItemInfo"
+                type="XML"
+            />
+        </uxap:sections>
+        <uxap:footer>
+            <OverflowToolbar>
+                <ToolbarSpacer />
+                <Button
+                    text="{i18n>saveButton}"
+                    type="Emphasized"
+                    press="handleSavePress"
+                />
+                <Button
+                    text="{i18n>cancelButton}"
+                    press="handleCancelPress"
+                />
+            </OverflowToolbar>
+        </uxap:footer>
+    </uxap:ObjectPageLayout>
+</mvc:View>

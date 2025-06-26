@@ -2,7 +2,6 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
     xmlns:form="sap.ui.layout.form"
-    xmlns:custom="nodar.miminoshvili.control"
 >
     <Dialog
         id="itemFormDialog"
@@ -45,63 +44,71 @@
                     valueLiveUpdate="true"
                 />
 
-                <Label text="{i18n>supplier}" />
+                <Label text="{i18n>price}" />
                 <Input
-                    id="supplierInput"
-                    placeholder="{i18n>itemFormInputPlaceholderForSupplier}"
+                    type="Number"
+                    placeholder="{i18n>itemFormInputPlaceholderForPrice}"
                     value="{
-					path: 'appState>/newItem/Supplier',
-					type: 'sap.ui.model.type.String',
-					constraints: {
-						minLength: 3,
-						maxLength: 25
-					}
+                        path: 'appState>/newItem/Price',
+                        type: 'sap.ui.model.type.Float',
+                        constraints: { minimum: 1, maximum: 999999 }
                     }"
                     required="true"
                     valueLiveUpdate="true"
                 />
 
-                <custom:PriceInputControl
-                    id="priceInputControl"
-                    label="{i18n>price}"
-                    placeholder="{i18n>itemFormInputPlaceholderForPrice}"
-                />
-
-                <Label text="Category" />
+                <Label text="{i18n>supplier}" />
                 <Select
-                    selectedKey="{appState>/newItem/Category}"
-                    items="{/Categories}"
+                    items="{/Suppliers}"
+                    selectedKey="{appState>/newItem/Supplier}"
                 >
                     <core:Item
-                        key="{Category}"
-                        text="{Category}"
+                        key="{ID}"
+                        text="{Name}"
                     />
                 </Select>
 
-                <Label text="{i18n>releaseYear}" />
+                <Label text="{i18n>category}" />
+                <Select
+                    items="{/Categories}"
+                    selectedKey="{appState>/newItem/Category}"
+                >
+                    <core:Item
+                        key="{ID}"
+                        text="{Name}"
+                    />
+                </Select>
+
+                <Label text="{i18n>releaseDate}" />
                 <DatePicker
                     id="itemFormDatePicker"
                     value="{
-                        'path': 'appState>/newItem/ReleaseYear',
-                        'type': 'sap.ui.model.type.Date',
-                        'formatOptions': {
-                            'pattern': 'yyyy'
-                            }
+                        'path': 'appState>/newItem/ReleaseDate',
+                        'type': 'sap.ui.model.type.Date'
                     }"
                     required="true"
                 />
-                <Label text="{i18n>status}" />
-                <Select selectedKey="{appState>/newItem/Status}">
-                    <core:Item
-                        key="In Stock"
-                        text="{i18n>inStock}"
-                    />
 
-                    <core:Item
-                        key="Out of Stock"
-                        text="{i18n>outOfStock}"
-                    />
-                </Select>
+                <Label text="{i18n>rating}" />
+                <RatingIndicator
+                    editable="true"
+                    value="{appState>/newItem/Rating}"
+                />
+
+                <Label text="{i18n>description}" />
+                <TextArea
+                    placeholder="{i18n>summaryText}"
+                    value="{
+					        path: 'appState>/newItem/Description',
+					        type: 'sap.ui.model.type.String',
+					        constraints: {
+						                minLength: 3,
+						                maxLength: 150
+					                }
+                    }"
+                    required="true"
+                    valueLiveUpdate="true"
+                />
             </form:content>
         </form:SimpleForm>
 

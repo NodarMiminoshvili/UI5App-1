@@ -7,13 +7,8 @@ sap.ui.define([], () => {
      * @enum {string}
      */
     Routes: {
-      CAR_DETAILS: "CarDetails",
-      CAR_LIST: "CarList",
-    },
-
-    ItemStatus: {
-      IN_STOCK: "In Stock",
-      OUT_OF_STOCK: "Out of Stock",
+      PRODUCT_DETAILS: "ProductDetails",
+      PRODUCT_LIST: "ProductList",
     },
   };
 });

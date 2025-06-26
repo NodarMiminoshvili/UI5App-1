@@ -5,7 +5,7 @@
     xmlns:core="sap.ui.core"
     xmlns:forms="sap.ui.layout.form"
 >
-    <uxap:ObjectPageSection visible="{/EditMode}">
+    <uxap:ObjectPageSection visible="{appState>/EditMode}">
         <uxap:subSections>
             <uxap:ObjectPageSubSection
                 title="General Information"
@@ -20,9 +20,9 @@
                         columnsXL="4"
                         id="form"
                     >
-                        <Label text="ID" />
+                        <Label text="{i18n>id}" />
                         <Input
-                            value="{/EditedCar/ID}"
+                            value="{ID}"
                             editable="false"
                             required="true"
                         />
@@ -31,11 +31,10 @@
                         <Input
                             type="Text"
                             value="{
-					            path: '/EditedCar/Name',
+					            path: 'Name',
 					            type: 'sap.ui.model.type.String',
 					            constraints: {
-						            minLength: 3,
-						            maxLength: 25
+						            minLength: 3
 					            }
                             }"
                             required="true"
@@ -44,69 +43,73 @@
 
                         <Label text="{i18n>supplier}" />
                         <Select
-                            selectedKey="{/EditedCar/Supplier}"
+                            id="supplierSelect"
                             items="{/Suppliers}"
                             required="true"
+                            selectedKey="{Supplier/ID}"
                         >
                             <core:Item
-                                key="{Supplier}"
-                                text="{Supplier}"
+                                key="{ID}"
+                                text="{Name}"
                             />
                         </Select>
 
                         <Label text="{i18n>category}" />
                         <Select
-                            selectedKey="{/EditedCar/Category}"
+                            id="categorySelect"
                             items="{/Categories}"
                             required="true"
+                            selectedKey="{Category/ID}"
                         >
                             <core:Item
-                                key="{Category}"
-                                text="{Category}"
+                                key="{ID}"
+                                text="{Name}"
                             />
                         </Select>
 
-                        <Label text="{i18n>availability}" />
-                        <Select
-                            selectedKey="{/EditedCar/Status} "
+                        <Label text="{i18n>description}" />
+                        <TextArea
+                            placeholder="{i18n>summaryText}"
+                            value="{
+					                path: 'Description',
+					                type: 'sap.ui.model.type.String',
+					                constraints: {
+						                        minLength: 3,
+						                        maxLength: 150
+					                            }
+                            }"
                             required="true"
-                        >
-                            <core:Item
-                                key="In Stock"
-                                text="{i18n>inStock}"
-                            />
+                            valueLiveUpdate="true"
+                        />
 
-                            <core:Item
-                                key="Out of Stock"
-                                text="{i18n>outOfStock}"
-                            />
-                        </Select>
+                        <Label text="{i18n>rating}" />
+                        <RatingIndicator value="{Rating}" />
+
+                        <Label text="{i18n>releaseDate}" />
+                        <DatePicker
+                            value="{
+                                    'path': 'ReleaseDate',
+                                    'type': 'sap.ui.model.type.Date'
+                                 }"
+                            required="true"
+                        />
 
                         <Label text="{i18n>price}" />
                         <Input
                             type="Number"
                             placeholder="{i18n>itemFormInputPlaceholderForPrice}"
                             value="{
-					            path: '/EditedCar/PriceAmount',
-					            type: 'sap.ui.model.type.Integer',
+					            path: 'Price',
+					            type: 'sap.ui.model.type.Float',
+                                formatOptions: { groupingEnabled: false },
 					            constraints: {
-						            minimum: 1000
+						            minimum: 1,
+                                    maximum: 999999.99999
 					                }
                             }"
                             required="true"
                             valueLiveUpdate="true"
                         />
-
-                        <Select selectedKey="{/EditedCar/PriceCurrency}">
-                            <core:Item
-                                key="USD"
-                                text="USD"
-                            />
-                            <core:Item
-                                key="EUR"
-                                text="EUR"
-                            />
-                        </Select>
                     </forms:SimpleForm>
                 </uxap:blocks>
             </uxap:ObjectPageSubSection>
