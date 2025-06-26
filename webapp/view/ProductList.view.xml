@@ -4,14 +4,14 @@
     xmlns="sap.m"
     xmlns:f="sap.f"
     xmlns:fb="sap.ui.comp.filterbar"
-    controllerName="nodar.miminoshvili.controller.CarList"
+    controllerName="nodar.miminoshvili.controller.ProductList"
     height="100%"
 >
     <f:DynamicPage class="sapUiNoContentPadding">
         <f:title>
             <f:DynamicPageTitle>
                 <f:heading>
-                    <Title text="{i18n>carTableTitle}" />
+                    <Title text="{i18n>productTableTitle}" />
                 </f:heading>
                 <f:expandedContent>
                     <Label text="{appState>/ExpandedLabel}" />
@@ -60,8 +60,8 @@
 											}"
                                     >
                                         <core:Item
-                                            key="{Supplier}"
-                                            text="{Supplier}"
+                                            key="{ID}"
+                                            text="{Name}"
                                         />
                                     </ComboBox>
                                 </fb:control>
@@ -74,7 +74,6 @@
                             >
                                 <fb:control>
                                     <MultiComboBox
-                                        id="categoryInput"
                                         name="Category"
                                         selectionChange=".onMultiComboBoxChange"
                                         items="{
@@ -83,20 +82,20 @@
 											}"
                                     >
                                         <core:Item
-                                            key="{Category}"
-                                            text="{Category}"
+                                            key="{ID}"
+                                            text="{Name}"
                                         />
                                     </MultiComboBox>
                                 </fb:control>
                             </fb:FilterGroupItem>
                             <fb:FilterGroupItem
                                 name="ReleaseYear"
-                                label="{i18n>releaseYear}"
+                                label="{i18n>releasedBetween}"
                                 groupName="Group1"
                                 visibleInFilterBar="true"
                             >
                                 <fb:control>
-                                    <DatePicker
+                                    <DateRangeSelection
                                         displayFormat="yyyy"
                                         change="onDatePickerChange"
                                     />
@@ -111,7 +110,11 @@
         <f:content>
             <Table
                 id="table"
-                items="{/Cars}"
+                items="{
+                        path: '/Products',
+                        parameters: { expand: 'Supplier,Category'  },
+                        sorter: { path: 'Name', descending: false }
+                    }"
                 mode="MultiSelect"
                 inset="true"
                 selectionChange="onTableSelectionChange"
@@ -120,10 +123,7 @@
                     <OverflowToolbar>
                         <Title
                             text="{
-                                parts: [
-							    'i18n>cars',
-							    '/Count'
-						        ],
+                                parts: ['i18n>products', 'appState>/Count'],
 						        formatter: '.Formatter.formatMessage'
                             }"
                         />
@@ -140,16 +140,13 @@
                             press="handleDeletePress"
                         />
                         <Button
-                            tooltip="Sort"
+                            tooltip="{i18n>sort}"
                             icon="sap-icon://sort"
                             press="handleSortButtonPressed"
                         />
                     </OverflowToolbar>
                 </headerToolbar>
                 <columns>
-                    <Column hAlign="Center">
-                        <Text text="{i18n>photo}" />
-                    </Column>
                     <Column
                         minScreenWidth="Medium"
                         demandPopin="true"
@@ -157,9 +154,7 @@
                     >
                         <Text text="{i18n>product}" />
                     </Column>
-                    <Column hAlign="Left">
-                        <Text text="{i18n>name}" />
-                    </Column>
+
                     <Column
                         hAlign="Left"
                         minScreenWidth="Large"
@@ -176,18 +171,26 @@
                     </Column>
 
                     <Column
-                        hAlign="Left"
-                        minScreenWidth="1250px"
+                        minScreenWidth="Desktop"
                         demandPopin="true"
+                        hAlign="Right"
                     >
-                        <Text text="{i18n>availability}" />
+                        <Text text="{i18n>releaseDate}" />
                     </Column>
+
                     <Column
                         minScreenWidth="Desktop"
                         demandPopin="true"
                         hAlign="Right"
                     >
-                        <Text text="{i18n>releaseYear}" />
+                        <Text text="{i18n>discontinuedDate}" />
+                    </Column>
+                    <Column
+                        hAlign="Left"
+                        minScreenWidth="1250px"
+                        demandPopin="true"
+                    >
+                        <Text text="{i18n>rating}" />
                     </Column>
                     <Column
                         minScreenWidth="Small"
@@ -203,24 +206,40 @@
                         press=".onColPress"
                     >
                         <cells>
-                            <Avatar
-                                src="{Photo}"
-                                displaySize="S"
+                            <ObjectIdentifier
+                                title="{ 
+                                        parts: ['Name', 'ID'],
+						                formatter: '.Formatter.formatNameAndId'
+                                    }"
                             />
-                            <ObjectIdentifier title="{ID}" />
-                            <Text text="{Name}" />
-                            <Text text="{Supplier}" />
-                            <Text text="{Category}" />
-                            <ObjectStatus
-                                text="{Status}"
-                                state="{path: 'Status', formatter: '.Formatter.statusToState'}"
+                            <Text text="{Supplier/Name}" />
+
+                            <Text text="{Category/Name}" />
+
+                            <ObjectAttribute
+                                text="{ path: 'ReleaseDate',
+                                        type: 'sap.ui.model.type.Date',
+                                        formatOptions: { style: 'medium' } }"
                             />
 
-                            <ObjectAttribute text="{ReleaseYear}" />
+                            <ObjectStatus
+                                text="{ 
+                                        path: 'DiscontinuedDate',
+                                        type: 'sap.ui.model.type.Date',
+                                        formatOptions: { style: 'medium' },
+                                        formatter: '.Formatter.formatDiscontinuedDate'
+                                    }"
+                                state="{path: 'DiscontinuedDate', formatter: '.Formatter.dateToState'}"
+                            />
+
+                            <RatingIndicator
+                                value="{Rating}"
+                                displayOnly="true"
+                            />
 
                             <ObjectNumber
-                                unit="{PriceCurrency}"
-                                number="{PriceAmount}"
+                                unit="{i18n>usd}"
+                                number="{Price}"
                             />
                         </cells>
                     </ColumnListItem>

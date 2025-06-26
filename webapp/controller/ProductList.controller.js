@@ -22,15 +22,24 @@ sap.ui.define(
   ) => {
     "use strict";
 
-    return BaseController.extend("nodar.miminoshvili.controller.CarList", {
+    return BaseController.extend("nodar.miminoshvili.controller.ProductList", {
       /**
-       * Initializes the controller and sets the item count in the model.
+       * Initializes the controller and sets up the route pattern handler.
        * @public
        */
       onInit() {
-        const oModel = this.getOwnerComponent().getModel();
-        const aItems = oModel.getProperty("/Cars");
-        oModel.setProperty("/Count", aItems.length);
+        this.getOwnerComponent()
+          .getRouter()
+          .getRoute(Constants.Routes.PRODUCT_LIST)
+          .attachPatternMatched(this.onPatternMatched.bind(this));
+      },
+
+      /**
+       * Updates the item count when route pattern is matched.
+       * @private
+       */
+      onPatternMatched() {
+        this._trackItemCountChange && this._trackItemCountChange();
       },
 
       /**
@@ -53,7 +62,7 @@ sap.ui.define(
         if (aSelectedKeys.length > 0) {
           const aFilters = aSelectedKeys.map((_, idx) => {
             return new Filter(
-              "Category",
+              "Category/ID",
               FilterOperator.EQ,
               aSelectedKeys[idx]
             );
@@ -83,7 +92,11 @@ sap.ui.define(
         const sSelectedKey = oEvent.getSource().getSelectedKey();
         const oModel = this.getView().getModel("appState");
 
-        const oFilter = new Filter("Supplier", FilterOperator.EQ, sSelectedKey);
+        const oFilter = new Filter(
+          "Supplier/ID",
+          FilterOperator.EQ,
+          sSelectedKey
+        );
 
         if (sSelectedKey) {
           oModel.setProperty("/ActiveFilters/SupplierFilter", oFilter);
@@ -115,9 +128,13 @@ sap.ui.define(
           return;
         }
 
-        const aFilters = ["ID", "Name", "Supplier"].map((property) => {
-          return new Filter(property, FilterOperator.Contains, sQuery);
-        });
+        const aFilters = isNaN(sQuery)
+          ? ["Name"].map((property) => {
+              return new Filter(property, FilterOperator.Contains, sQuery);
+            })
+          : ["ID"].map((property) => {
+              return new Filter(property, FilterOperator.EQ, sQuery);
+            });
 
         const oCombinedFilter = new Filter({
           filters: aFilters,
@@ -126,33 +143,6 @@ sap.ui.define(
 
         oModel.setProperty("/ActiveFilters/QueryFilter", oCombinedFilter);
 
-        this._applyFilters();
-      },
-
-      /**
-       * Handles DatePicker changes and applies release year filters.
-       * @public
-       * @param {sap.ui.base.Event} oEvent - The DatePicker change event
-       */
-      onDatePickerChange(oEvent) {
-        const selectedDate = oEvent.getSource().getDateValue();
-        const oModel = this.getView().getModel("appState");
-
-        if (selectedDate) {
-          const selectedYear = selectedDate.getFullYear();
-
-          const oFilter = new Filter({
-            path: "ReleaseYear",
-            operator: FilterOperator.EQ,
-            value1: selectedYear.toString(),
-          });
-
-          oModel.setProperty("/ActiveFilters/ReleaseYearFilter", oFilter);
-        } else {
-          const oData = oModel.getData();
-          delete oData.ActiveFilters.ReleaseYearFilter;
-          oModel.setData(oData);
-        }
         this._applyFilters();
       },
 
@@ -225,9 +215,18 @@ sap.ui.define(
           ActiveFilters: {},
           ExpandedLabel: sNoActiveFiltersLabel,
           SnappedLabel: sNoActiveFiltersLabel,
+          Count: 0,
         });
 
         this.getView().setModel(oModel, "appState");
+
+        const oODataModel = this.getOwnerComponent().getModel();
+
+        oODataModel.read("/Products/$count", {
+          success: (iCount) => {
+            oModel.setProperty("/Count", iCount);
+          },
+        });
       },
 
       /**
@@ -274,31 +273,30 @@ sap.ui.define(
         const aSelectedItems = oTable.getSelectedItems();
 
         const oModel = this.getView().getModel();
-        const aFilteredItems = [...oModel.getProperty("/Cars")];
 
         aSelectedItems.forEach((oSelectedItem) => {
           const sSelectedItemId = oSelectedItem
             .getBindingContext()
             .getObject().ID;
 
-          const iItemIdx = aFilteredItems.findIndex(
-            (oItem) => oItem.ID === sSelectedItemId
-          );
+          const sKey = oModel.createKey("/Products", { ID: sSelectedItemId });
 
-          if (iItemIdx === -1) return;
+          oModel.remove(sKey, {
+            success: () => {
+              this.getView()
+                .getModel("appState")
+                .setProperty("/DeleteButton/Enabled", false);
 
-          aFilteredItems.splice(iItemIdx, 1);
+              oTable.removeSelections();
+              this._trackItemCountChange();
+              this._displayDeletionToast(aSelectedItems.length);
+            },
+            error: (oError) => {
+              console.error(oError);
+              this._displayToast("deleteFailed");
+            },
+          });
         });
-
-        oModel.setProperty("/Cars", aFilteredItems);
-
-        this.getView()
-          .getModel("appState")
-          .setProperty("/DeleteButton/Enabled", false);
-
-        oTable.removeSelections();
-        this._trackItemCountChange();
-        this._displayDeletionToast(aSelectedItems.length);
       },
 
       /**
@@ -357,13 +355,9 @@ sap.ui.define(
 
         this.byId("itemFormDatePicker").setMaxDate(oDate);
 
-        this.getView().getModel("appState").setProperty("/newItem", {
-          ReleaseYear: oDate,
-          PriceCurrency: "USD",
-          Category: "Sedan",
-          Status: "In Stock",
-          Photo: "/images/car.svg",
-        });
+        this.getView()
+          .getModel("appState")
+          .setProperty("/newItem", { ReleaseDate: oDate });
 
         this._oProductFormDialog.open();
       },
@@ -374,6 +368,8 @@ sap.ui.define(
        */
       onCancelItemCreation() {
         this._oProductFormDialog.close();
+
+        this.getView().getModel("appState").setProperty("/newItem", null);
       },
 
       /**
@@ -381,39 +377,52 @@ sap.ui.define(
        * @public
        */
       onSaveItem() {
-        const oModel = this.getView().getModel();
-
-        const oNewItem = this.getView()
-          .getModel("appState")
-          .getProperty("/newItem");
-
         if (!this._validateFormFields(this.byId("itemFormDialog"))) {
           return;
         }
 
-        const aPrevItems = oModel.getProperty("/Cars");
-        oModel.setProperty("/Cars", [
-          ...aPrevItems,
-          {
-            ...oNewItem,
-            ID: this._generateItemId(aPrevItems),
-            ReleaseYear: oNewItem.ReleaseYear.getFullYear(),
+        const oModel = this.getView().getModel();
+
+        const {
+          Name,
+          Price,
+          Category,
+          Supplier,
+          Rating,
+          Description,
+          ReleaseDate,
+        } = this.getView().getModel("appState").getProperty("/newItem");
+
+        const oNewProduct = {
+          ID: Math.round(Math.random() * 136),
+          Name,
+          Price: Price.toString(),
+          Rating: Rating.toString(),
+          Description,
+          ReleaseDate,
+
+          Category: {
+            __metadata: {
+              uri: oModel.createKey("/Categories", { ID: Category }),
+            },
           },
-        ]);
 
-        this._oProductFormDialog.close();
+          Supplier: {
+            __metadata: {
+              uri: oModel.createKey("/Suppliers", { ID: Supplier }),
+            },
+          },
+        };
 
-        this._trackItemCountChange();
-      },
-
-      /**
-       * Generates a unique ID for a new item.
-       * @private
-       * @param {Array} aPrevItems - Array of existing items
-       * @returns {string} The generated item ID
-       */
-      _generateItemId(aPrevItems) {
-        return `C${Math.round(Math.random() * 10)}0${aPrevItems.length + 1}`;
+        oModel.create("/Products", oNewProduct, {
+          success: () => {
+            this._oProductFormDialog.close();
+            this._trackItemCountChange();
+          },
+          error: (oError) => {
+            console.error(oError);
+          },
+        });
       },
 
       /**
@@ -421,36 +430,47 @@ sap.ui.define(
        * @private
        */
       _trackItemCountChange() {
-        const oBinding = this.byId("table").getBinding("items");
-        const iCount = oBinding.getCount();
-        const oModel = oBinding.getModel();
-        oModel.setProperty("/Count", iCount);
+        const oModel = this.getView().getModel("appState");
+        const aFilters = Object.values(oModel.getProperty("/ActiveFilters"));
+        const oODataModel = this.getOwnerComponent().getModel();
+
+        oODataModel.read("/Products/$count", {
+          filters: aFilters,
+
+          success: (iCount) => {
+            oModel.setProperty("/Count", iCount);
+          },
+
+          error: (oError) => {
+            console.error(oError);
+          },
+        });
       },
 
       /**
-       * Navigates to the car details page.
+       * Navigates to the product details page.
        * @public
        * @param {sap.ui.base.Event} oEvent - The column press event
        */
       onColPress(oEvent) {
-        const { ID: carId } = oEvent
+        const { ID: productId } = oEvent
           .getSource()
           .getBindingContext()
           .getObject();
 
         this.getOwnerComponent()
           .getRouter()
-          .navTo(Constants.Routes.CAR_DETAILS, { carId });
+          .navTo(Constants.Routes.PRODUCT_DETAILS, { productId });
       },
 
       /**
-       * Opens the sort dialog for the car list.
+       * Opens the sort dialog for the product list.
        * @public
        * @returns {Promise<void>}
        */
       async handleSortButtonPressed() {
         this._oSortDialogFragment ??= await this.loadFragment({
-          name: "nodar.miminoshvili.view.fragments.CarListSortDialog",
+          name: "nodar.miminoshvili.view.fragments.ProductListSortDialog",
         });
 
         this._oSortDialogFragment.open();
@@ -469,6 +489,34 @@ sap.ui.define(
         this.byId("table")
           .getBinding("items")
           .sort(new Sorter(sPath, bDescending));
+      },
+
+      /**
+       * Handles DatePicker changes and applies release year filters.
+       * @public
+       * @param {sap.ui.base.Event} oEvent - The DatePicker change event
+       */
+      onDatePickerChange(oEvent) {
+        const oModel = this.getView().getModel("appState");
+
+        const oFrom = oEvent.getParameter("from");
+        const oTo = oEvent.getParameter("to");
+
+        if (oFrom && oTo) {
+          const oFilter = new Filter({
+            path: "ReleaseDate",
+            operator: FilterOperator.BT,
+            value1: oFrom,
+            value2: oTo,
+          });
+
+          oModel.setProperty("/ActiveFilters/ReleaseYearFilter", oFilter);
+        } else {
+          const oData = oModel.getData();
+          delete oData.ActiveFilters.ReleaseYearFilter;
+          oModel.setData(oData);
+        }
+        this._applyFilters();
       },
     });
   }

@@ -5,13 +5,10 @@
     xmlns:core="sap.ui.core"
     xmlns:forms="sap.ui.layout.form"
 >
-    <uxap:ObjectPageSection
-        id="displayFragment"
-        visible="{= !%{/EditMode}}"
-    >
+    <uxap:ObjectPageSection visible="{= !%{appState>/EditMode}}">
         <uxap:subSections>
             <uxap:ObjectPageSubSection
-                title="General Information"
+                title="{i18n>generalInfoTitle}"
                 showTitle="false"
             >
                 <uxap:blocks>
@@ -22,28 +19,40 @@
                         columnsL="3"
                         columnsXL="4"
                     >
-                        <Label text="ID" />
-                        <Text text="{/Car/ID}" />
+                        <Label text="{i18n>id}" />
+                        <Text text="{ID}" />
 
                         <Label text="{i18n>name}" />
-                        <Text text="{/Car/Name}" />
+                        <Text text="{Name}" />
 
                         <Label text="{i18n>supplier}" />
-                        <Text text="{/Car/Supplier}" />
+                        <Text text="{Supplier/Name}" />
 
                         <Label text="{i18n>category}" />
-                        <Text text="{/Car/Category}" />
+                        <Text text="{Category/Name}" />
 
-                        <Label text="{i18n>availability}" />
-                        <ObjectStatus
-                            text="{/Car/Status}"
-                            state="{path: '/Car/Status', formatter: '.Formatter.statusToState'}"
+                        <Label text="{i18n>description}" />
+                        <Text text="{Description}" />
+
+                        <Label text="{i18n>rating}" />
+                        <RatingIndicator
+                            value="{Rating}"
+                            displayOnly="true"
+                            iconSize="1rem"
+                        />
+
+                        <Label text="{i18n>releaseDate}" />
+                        <Text
+                            text="{ path: 'ReleaseDate',
+                                    type: 'sap.ui.model.type.Date',
+                                    formatOptions: { style: 'medium' } 
+                                }"
                         />
 
                         <Label text="{i18n>price}" />
                         <ObjectNumber
-                            unit="{/Car/PriceCurrency}"
-                            number="{/Car/PriceAmount}"
+                            unit="{i18n>usd}"
+                            number="{Price}"
                         />
                     </forms:SimpleForm>
                 </uxap:blocks>

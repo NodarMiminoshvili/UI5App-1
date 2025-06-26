@@ -5,26 +5,29 @@
     <ViewSettingsDialog confirm="handleSortDialogConfirm">
         <sortItems>
             <ViewSettingsItem
-                text="Price"
-                key="PriceAmount"
-                selected="true"
+                text="{i18n>price}"
+                key="Price"
             />
             <ViewSettingsItem
-                text="Name"
+                text="{i18n>name}"
                 key="Name"
                 selected="true"
             />
             <ViewSettingsItem
-                text="Supplier"
-                key="Supplier"
+                text="{i18n>supplier}"
+                key="Supplier/Name"
             />
             <ViewSettingsItem
-                text="Category"
-                key="Category"
+                text="{i18n>category}"
+                key="Category/Name"
             />
             <ViewSettingsItem
-                text="Release Year"
-                key="ReleaseYear"
+                text="{i18n>rating}"
+                key="Rating"
+            />
+            <ViewSettingsItem
+                text="{i18n>releaseDate}"
+                key="ReleaseDate"
             />
         </sortItems>
     </ViewSettingsDialog>

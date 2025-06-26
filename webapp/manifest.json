@@ -10,6 +10,15 @@
     "type": "application",
     "applicationVersion": {
       "version": "1.0.0"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/V2/(S(g2nixij2iu2fndbjc2qzlj3f))/OData/OData.svc/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "2.0"
+        }
+      }
     }
   },
   "sap.ui": {
@@ -43,10 +52,11 @@
         }
       },
       "": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "model/data.json",
+        "dataSource": "mainService",
+        "type": "sap.ui.model.odata.v2.ODataModel",
         "settings": {
-          "defaultBindingMode": "TwoWay"
+          "defaultBindingMode": "TwoWay",
+          "useBatch": false
         }
       }
     },
@@ -67,21 +77,21 @@
       "routes": [
         {
           "pattern": "",
-          "name": "CarList",
-          "target": "carList"
+          "name": "ProductList",
+          "target": "productList"
         },
         {
-          "pattern": "car/{carId}",
-          "name": "CarDetails",
-          "target": "car"
+          "pattern": "product/{productId}",
+          "name": "ProductDetails",
+          "target": "product"
         }
       ],
       "targets": {
-        "carList": {
-          "name": "CarList"
+        "productList": {
+          "name": "ProductList"
         },
-        "car": {
-          "name": "CarDetails"
+        "product": {
+          "name": "ProductDetails"
         }
       }
     }
