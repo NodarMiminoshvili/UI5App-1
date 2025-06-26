@@ -2,6 +2,7 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
     xmlns:form="sap.ui.layout.form"
+    xmlns:custom="nodar.miminoshvili.control"
 >
     <Dialog
         id="itemFormDialog"
@@ -33,7 +34,7 @@
                     id="nameInput"
                     placeholder="{i18n>itemFormInputPlaceholderForName}"
                     value="{
-					path: 'newItemModel>/Name',
+					path: 'appState>/newItem/Name',
 					type: 'sap.ui.model.type.String',
 					constraints: {
 						minLength: 3,
@@ -49,7 +50,7 @@
                     id="supplierInput"
                     placeholder="{i18n>itemFormInputPlaceholderForSupplier}"
                     value="{
-					path: 'newItemModel>/Supplier',
+					path: 'appState>/newItem/Supplier',
 					type: 'sap.ui.model.type.String',
 					constraints: {
 						minLength: 3,
@@ -60,39 +61,15 @@
                     valueLiveUpdate="true"
                 />
 
-                <Label text="{i18n>price}" />
-                <HBox>
-                    <Input
-                        id="priceInput"
-                        type="Number"
-                        placeholder="{i18n>itemFormInputPlaceholderForPrice}"
-                        value="{
-					        path: 'newItemModel>/PriceAmount',
-					        type: 'sap.ui.model.type.Integer',
-					        constraints: {
-						        minimum: 1000,
-                                maximum: 1000000
-					        }
-                        }"
-                        required="true"
-                        valueLiveUpdate="true"
-                    />
-
-                    <Select selectedKey="{newItemModel>/PriceCurrency}">
-                        <core:Item
-                            key="USD"
-                            text="USD"
-                        />
-                        <core:Item
-                            key="EUR"
-                            text="EUR"
-                        />
-                    </Select>
-                </HBox>
+                <custom:PriceInputControl
+                    id="priceInputControl"
+                    label="{i18n>price}"
+                    placeholder="{i18n>itemFormInputPlaceholderForPrice}"
+                />
 
                 <Label text="Category" />
                 <Select
-                    selectedKey="{newItemModel>/Category}"
+                    selectedKey="{appState>/newItem/Category}"
                     items="{/Categories}"
                 >
                     <core:Item
@@ -105,7 +82,7 @@
                 <DatePicker
                     id="itemFormDatePicker"
                     value="{
-                        'path': 'newItemModel>/ReleaseYear',
+                        'path': 'appState>/newItem/ReleaseYear',
                         'type': 'sap.ui.model.type.Date',
                         'formatOptions': {
                             'pattern': 'yyyy'
@@ -114,7 +91,7 @@
                     required="true"
                 />
                 <Label text="{i18n>status}" />
-                <Select selectedKey="{newItemModel>/Status}">
+                <Select selectedKey="{appState>/newItem/Status}">
                     <core:Item
                         key="In Stock"
                         text="{i18n>inStock}"
